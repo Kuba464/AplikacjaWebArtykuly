@@ -9,12 +9,13 @@ import ProcesRecenzji from "../Strony/ProcesRecenzji";
 import Recenzenci from "../Strony/Recenzenci";
 import Redakcja from "../Strony/Redakcja";
 import Roczniki from "../Strony/Roczniki";
+import DodawanieEdytowanieArtykulu from "../Strony/DodawanieEdytowanieArtykulu";
 
 function Navbar () {
   const location = useLocation();
 
   // navbar ukryty na /admin
-  const hideNavbar = location.pathname === "/admin" || location.pathname === "/admin/logowanie";
+  const hideNavbar = location.pathname === "/admin" || location.pathname === "/admin/logowanie" || location.pathname === "/admin/dodaj-edytuj-artykul";
     if (location.pathname === "/admin/logowanie") {
       localStorage.removeItem("zalogowany");
     }
@@ -41,6 +42,7 @@ function Navbar () {
         <Route path="/recenzenci" element={<Recenzenci />} />
         <Route path="/redakcja" element={<Redakcja />} />
         <Route path="/roczniki" element={<Roczniki />} />
+        <Route path="/admin/dodaj-edytuj-artykul" element={<DodawanieEdytowanieArtykulu />} />
       </Routes>
     </>
   );
