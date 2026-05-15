@@ -58,11 +58,7 @@ function DragAndDropPDF() {
           backgroundColor: isDragging ? "#f0f8ff" : "#fafafa",
         }}
       >
-        {pdfFile ? (
-          <p>{pdfFile.name}</p>
-        ) : (
-          <p>Przeciągnij plik PDF tutaj lub kliknij</p>
-        )}
+        {pdfFile ? (<p>{pdfFile.name}</p>) : (<p>Przeciągnij plik PDF tutaj lub kliknij</p>)}
       </div>
 
       <input
