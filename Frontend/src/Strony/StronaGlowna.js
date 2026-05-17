@@ -1,12 +1,18 @@
 import  React from 'react';
 
+import Siteheader from "../Components/Siteheader.js"
+import Hero from "../Components/Hero.js"
+import Categories from "../Components/Categories.js"
+
 function StronaGlowna() {
 localStorage.removeItem("zalogowany");
   return (
-    <div>
-      <h1>Strona Główna</h1>
-      <p> Witaj na naszej stronie! </p>
-    </div>
+    <>
+      <Siteheader/>
+      <Hero/>
+      <Categories/>
+    </>
+  
   );
 };
 

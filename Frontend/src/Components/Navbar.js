@@ -1,15 +1,8 @@
 import React from "react";
 import {BrowserRouter,Routes,Route,Link,useLocation} from "react-router-dom";
-import ONas from "../Strony/OCzasopismie";
-import AdminPanel from "../Strony/AdminPanel";
-import StronaGlowna from "../Strony/StronaGlowna";
-import Login from "../Strony/AdminLogowanie";
-import InfoDlaAut from "../Strony/InfoDlaAut";
-import ProcesRecenzji from "../Strony/ProcesRecenzji";
-import Recenzenci from "../Strony/Recenzenci";
-import Redakcja from "../Strony/Redakcja";
-import Roczniki from "../Strony/Roczniki";
-import DodawanieEdytowanieArtykulu from "../Strony/DodawanieEdytowanieArtykulu";
+
+
+import "../styles/global.css";
 
 function Navbar () {
   const location = useLocation();
@@ -22,28 +15,43 @@ function Navbar () {
   return (
     <>
       {!hideNavbar && (
-        <nav className="navbar">
-          <Link to="/">Strona Główna</Link> |{" "}
-          <Link to="/o-nas">O Czasopismie</Link> |{" "}
-          <Link to="/proces-recenzji">Proces Recenzji</Link> |{" "}
-          <Link to="/recenzenci">Recenzenci</Link> |{" "}
-          <Link to="/redakcja">Redakcja</Link> |{" "}
-          <Link to="/roczniki">Roczniki</Link>
-        </nav>
+        <div className="navbar">
+          <nav>
+            <Link to="/">Strona główna</Link>
+
+            <Link to="/roczniki">Roczniki</Link>
+
+            <div className="wiecej">
+              <div className="dropdown">
+                <button className="dropbtn">Więcej</button>
+
+                <div className="dropdown-content">
+                  <Link to="/o-nas">O czasopiśmie</Link>
+                  <Link to="/redakcja">Redakcja</Link>
+                  <Link to="/info-dla-autorow">
+                    Informacje dla autorów
+                  </Link>
+                  <Link to="/proces-recenzji">Proces recenzji</Link>
+                  <Link to="/recenzenci">Recenzenci</Link>
+                </div>
+              </div>
+
+              <div className="strzalka"></div>
+            </div>
+
+            <Link to="/kontakt">Kontakt</Link>
+          </nav>
+
+          <div className="search-wrapper">
+            <input
+              className="nav-right"
+              type="text"
+              placeholder="Search for articles..."
+            />
+          </div>
+        </div>
       )}
 
-      <Routes>
-        <Route path="/" element={<StronaGlowna />} />
-        <Route path="/o-nas" element={<ONas />} />
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/admin/logowanie" element={<Login />} />
-        <Route path="/info-dla-autorow" element={<InfoDlaAut />} />
-        <Route path="/proces-recenzji" element={<ProcesRecenzji />} />
-        <Route path="/recenzenci" element={<Recenzenci />} />
-        <Route path="/redakcja" element={<Redakcja />} />
-        <Route path="/roczniki" element={<Roczniki />} />
-        <Route path="/admin/dodaj-edytuj-artykul" element={<DodawanieEdytowanieArtykulu />} />
-      </Routes>
     </>
   );
 }
