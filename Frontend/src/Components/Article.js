@@ -1,27 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 
-function Article() {
+function Article({ article }) {
   return (
     <div className="article">
       <div className="art-tags">
-        <span className="art-tag">Informatyka</span>
+        <span className="art-tag">{article.category}</span>
       </div>
 
-      <div className="art-title">
-        Zastosowanie sztucznej inteligencji w analizie danych
-      </div>
+      <div className="art-title">{article.title}</div>
 
-      <p className="art-pages">124–138</p>
+      <p className="art-pages">
+        {article.pages_from}–{article.pages_to}
+      </p>
 
       <div className="art-tags2">
-        <span className="art-tag2">AI</span>
-        <span className="art-tag2">Machine Learning</span>
-        <span className="art-tag2">Python</span>
+        <span className="art-tag2">Kategoria</span>
       </div>
 
       <div className="art-meta">
-        <span>12 Mar 2026</span>
-        <span className="art-author">Jan Kowalski</span>
+        <span>{article.publication_date}</span>
+        <div className="authors">
+          {article.authors.split(", ").map((author, index) => (
+            <span className="art-author" key={index}>
+              {author}
+              <br />
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

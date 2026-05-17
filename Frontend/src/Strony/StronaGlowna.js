@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Article from "../Components/Article.js";
+import Article from "../Components/Article";
 
 import Siteheader from "../Components/Siteheader.js";
 import Hero from "../Components/Hero.js";
@@ -10,7 +10,7 @@ function StronaGlowna() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/articles")
+    fetch("http://localhost:5000/api/articles")
       .then((res) => res.json())
       .then((data) => {
         setArticles(data);
@@ -31,7 +31,7 @@ function StronaGlowna() {
     <>
       <Siteheader />
       <Hero />
-      <div>
+      <div className="blog-grid">
         {articles.map((article) => (
           <Article key={article.id} article={article} />
         ))}
