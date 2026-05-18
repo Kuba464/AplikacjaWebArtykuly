@@ -335,7 +335,7 @@ nav a:hover, nav a:focus { border-bottom-color: var(--line); }
 .btn-dark:hover { background: var(--ink); color: var(--white); }
 
 /* CATEGORIES */
-.categories { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.categories { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 48px; }
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -353,7 +353,7 @@ nav a:hover, nav a:focus { border-bottom-color: var(--line); }
 .cat-cell:hover { background: var(--bg); }
 
 /* BLOG */
-.blog { padding: 72px 60px; border-bottom: 1px solid var(--border); }
+.blog { padding: 40px 60px; border-bottom: 1px solid var(--border); }
 .blog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -372,9 +372,10 @@ nav a:hover, nav a:focus { border-bottom-color: var(--line); }
   border-radius: 20px; letter-spacing: .04em;
 }
 
+.art-tags2 { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
 .art-tag2 {
-  background: var(--line); color: #fff;
-  font-size: 8px; font-weight: 600; padding: 4px 11px;
+  background: var(--bg2); color: var(--muted);
+  font-size: 11px; font-weight: 600; padding: 4px 11px;
   border-radius: 20px; letter-spacing: .04em;
 }
 .art-title {
@@ -396,6 +397,88 @@ nav a:hover, nav a:focus { border-bottom-color: var(--line); }
   flex-direction: column;
 }
 .art-author { display: flex; align-items: center; gap: 3px; }
+
+/* recenzja */
+.recenzje-page { max-width: 860px; margin: 0 auto; padding: 0 40px 80px; }
+
+.recenzje-hero { padding: 64px 0 48px; text-align: center; }
+
+.recenzje-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+}
+
+.recenzje-step {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  align-items: start;
+  padding: 32px 36px;
+  border-bottom: 1px solid var(--border);
+  transition: background .18s;
+}
+.recenzje-step:last-child { border-bottom: none; }
+.recenzje-step:hover { background: var(--bg); }
+
+.step-num {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.step-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.step-desc {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.recenzje-footer {
+  margin-top: 48px;
+  padding: 32px 36px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.info-aut-footer {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.info-aut-col {
+  background: var(--bg);
+  padding: 32px 36px;
+}
+.info-aut-col a { color: var(--accent); font-weight: 500; }
+.info-aut-col a:hover { text-decoration: underline; }
+
+.kontakt-link {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
 
 /* FOOTER */
 footer { padding: 60px 0; }

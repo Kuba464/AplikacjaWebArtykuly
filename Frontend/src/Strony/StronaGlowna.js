@@ -33,10 +33,12 @@ function StronaGlowna() {
     <>
       <Siteheader />
       <Hero />
-      <div className="blog-grid">
-        {articles.map((article) => (
-          <Article key={article.id} article={article} />
-        ))}
+      <div className="blog">
+        <div className="blog-grid">
+          {articles.map((article) => (
+            <Article key={article.id} article={article} />
+          ))}
+        </div>
       </div>
       <Categories />
     </>
