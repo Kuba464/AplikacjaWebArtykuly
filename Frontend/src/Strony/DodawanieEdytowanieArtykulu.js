@@ -11,7 +11,7 @@ async function DodajArtykul(articleData, navigate) {
 
     formData.append("title", articleData.tytul);
     formData.append("authors",JSON.stringify(articleData.autorzy));
-    formData.append("keywords",JSON.stringify(articleData.slowaKluczowe));
+    formData.append("tags",JSON.stringify(articleData.slowaKluczowe));
     formData.append("pages_from",articleData.zakresStronOd);
     formData.append("pages_to",articleData.zakresStronDo);
     formData.append("category",articleData.kategoria);
@@ -41,8 +41,8 @@ function DodawanieEdytowanieArtykulu() {
   const [pdfFile, setPdfFile] = useState(null);
   const [articleData, setArticleData] = useState({
     tytul: "",
-    autorzy: [""],
-    slowaKluczowe: [""],
+    autorzy: [],
+    slowaKluczowe: [],
     zakresStronOd: "",
     zakresStronDo: "",
     kategoria: "",
