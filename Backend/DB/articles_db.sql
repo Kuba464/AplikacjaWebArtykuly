@@ -18,7 +18,6 @@ create table if not exists categories (
 	symbol varchar(2) unique not null 
 );
 
-
 create table if not exists articles (
 	id serial primary key,
 	title varchar(500) not null,
@@ -61,4 +60,16 @@ insert into categories (category, symbol) values
 on conflict (symbol) do nothing;
  
 
+alter table articles add column if not exists extra_file_path varchar(200) not null default null;
+alter table articles add column if not exists publication_date date not null default current_date;
 
+create table if not exists keywords (
+	id serial primary key,
+	keyword varchar(50) unique not null
+);
+
+create table if not exists article_keywords (
+	id_article int references articles(id) on delete cascade,
+	id_keyword int references keywords(id) on delete cascade,
+	primary key (id_article, id_keyword)
+);
