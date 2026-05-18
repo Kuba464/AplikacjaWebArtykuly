@@ -13,9 +13,13 @@ function Article({ article }) {
         {article.pages_from}–{article.pages_to}
       </p>
 
-      <div className="art-tags2">
-        <span className="art-tag2">Kategoria</span>
-      </div>
+      {article.tags && (
+        <div className="art-tags2">
+          {article.tags.split(", ").map((tag, index) => (
+            <span className="art-tag2" key={index}>{tag}</span>
+          ))}
+        </div>
+      )}
 
       <div className="art-meta">
         <span>{article.publication_date}</span>

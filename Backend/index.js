@@ -29,15 +29,20 @@ app.get("/api/articles", async (req, res) => {
         extra_file_path,
         category,
         symbol,
-        string_agg(a.name || ' ' || a.surname, ', ' ORDER BY a.id) AS authors
+        (
+          SELECT string_agg(a.name || ' ' || a.surname, ', ' ORDER BY a.id)
+          FROM author_articles aa
+          JOIN authors a ON aa.id_author = a.id
+          WHERE aa.id_article = articles.id
+        ) AS authors,
+        (
+          SELECT string_agg(t.name, ', ' ORDER BY t.name)
+          FROM article_tags at
+          JOIN tags t ON at.id_tag = t.id
+          WHERE at.id_article = articles.id
+        ) AS tags
       FROM articles
-      LEFT JOIN categories
-        ON id_category = categories.id
-      LEFT JOIN author_articles aa
-        ON aa.id_article = articles.id
-      LEFT JOIN authors a
-        ON aa.id_author = a.id
-      GROUP BY articles.id, category, symbol
+      LEFT JOIN categories ON id_category = categories.id
       ORDER BY publication_date DESC;
     `);
 
