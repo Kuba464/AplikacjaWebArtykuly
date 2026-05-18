@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import StronaGlowna from "./StronaGlowna";
 
 function Login() {
   const [login, setLogin] = useState("");
@@ -14,6 +15,7 @@ function Login() {
     if (login === "admin" && haslo === "1234") {
       localStorage.setItem("zalogowany", "true");
       navigate("/admin");
+
     } else {
       alert("Nieprawidłowe dane");
     }

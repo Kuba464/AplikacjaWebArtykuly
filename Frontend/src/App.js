@@ -1,5 +1,5 @@
 import React from "react";
-import {BrowserRouter,Routes,Route,Link,useLocation} from "react-router-dom";
+import {BrowserRouter,Routes,Route} from "react-router-dom";
 import "./App.css";
 import Navbar from "./Components/Navbar.js";
 import Topbar from "./Components/Topbar.js"
@@ -17,6 +17,7 @@ import DodawanieEdytowanieArtykulu from "./Strony/DodawanieEdytowanieArtykulu";
 import Kontakt from "./Strony/Kontakt";
 
 function App() {
+  
   return (
     <BrowserRouter>
     <Topbar />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Autorzy from "../Components/Autorzy";
@@ -8,7 +8,12 @@ import DragAndDropPDF from "../Components/DragDropPDF";
 function DodawanieEdytowanieArtykulu() {
   const navigate = useNavigate();
 
-  if (localStorage.getItem("zalogowany") !== "true") { navigate("/admin/logowanie");}
+  useEffect(() => {
+    if (localStorage.getItem("zalogowany") !== "true") {
+      navigate("/admin/logowanie");
+    }
+  }, [navigate]);
+
   return (
     <div>
       <button type="button" onClick={() => {navigate("/admin");}}>
