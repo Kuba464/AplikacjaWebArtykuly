@@ -1,16 +1,15 @@
 import React, { useRef, useState } from "react";
 
-function DragAndDropPDF() {
+function DragAndDropPDF({ pdfFile, onChange }) {
   const fileInputRef = useRef(null);
 
-  const [pdfFile, setPdfFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
     if (file && file.type === "application/pdf") {
-      setPdfFile(file);
+      onChange(file);
     } else {
       alert("Możesz dodać tylko plik PDF!");
     }
@@ -23,7 +22,7 @@ function DragAndDropPDF() {
     const file = e.dataTransfer.files[0];
 
     if (file && file.type === "application/pdf") {
-      setPdfFile(file);
+      onChange(file);
     } else {
       alert("Możesz dodać tylko plik PDF!");
     }

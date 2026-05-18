@@ -19,6 +19,9 @@ function AdminPanel() {
             }}>
                 Wyloguj
             </button>
+            <button onClick={() => navigate("/admin/dodaj-edytuj-artykul")}>
+                Dodaj nowy artykuł
+            </button>
         </div>
     );
 }
