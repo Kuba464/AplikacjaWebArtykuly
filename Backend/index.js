@@ -119,6 +119,13 @@ WHERE
     WHERE aa.id_article = articles.id
       AND (a.name || ' ' || a.surname) ILIKE $1
   )
+  OR EXISTS (
+    SELECT 1
+    FROM article_tags at
+    JOIN tags t ON at.id_tag = t.id
+    WHERE at.id_article = articles.id
+      AND t.name ILIKE $1
+  )
 ORDER BY publication_date DESC;
       `,
       [`%${search}%`],
