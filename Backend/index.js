@@ -87,30 +87,41 @@ app.get("/api/search", async (req, res) => {
     const result = await pool.query(
       `
       SELECT
-        articles.id,
-        title,
-        pages_from,
-        pages_to,
-        publication_date,
-        pdf_path,
-        extra_file_path,
-        category,
-        symbol,
-        string_agg(a.name || ' ' || a.surname, ', ' ORDER BY a.id) AS authors
-      FROM articles
-      LEFT JOIN categories
-        ON id_category = categories.id
-      LEFT JOIN author_articles aa
-        ON aa.id_article = articles.id
-      LEFT JOIN authors a
-        ON aa.id_author = a.id
-      WHERE
-        title ILIKE $1
-        OR (a.name || ' ' || a.surname) ILIKE $1
-      GROUP BY articles.id, category, symbol
-      ORDER BY publication_date DESC;
+  articles.id,
+  title,
+  pages_from,
+  pages_to,
+  publication_date,
+  pdf_path,
+  extra_file_path,
+  category,
+  symbol,
+  (
+    SELECT string_agg(a.name || ' ' || a.surname, ', ' ORDER BY a.id)
+    FROM author_articles aa
+    JOIN authors a ON aa.id_author = a.id
+    WHERE aa.id_article = articles.id
+  ) AS authors,
+  (
+    SELECT string_agg(t.name, ', ' ORDER BY t.name)
+    FROM article_tags at
+    JOIN tags t ON at.id_tag = t.id
+    WHERE at.id_article = articles.id
+  ) AS tags
+FROM articles
+LEFT JOIN categories ON id_category = categories.id
+WHERE
+  title ILIKE $1
+  OR EXISTS (
+    SELECT 1
+    FROM author_articles aa
+    JOIN authors a ON aa.id_author = a.id
+    WHERE aa.id_article = articles.id
+      AND (a.name || ' ' || a.surname) ILIKE $1
+  )
+ORDER BY publication_date DESC;
       `,
-      [`%${search}%`]
+      [`%${search}%`],
     );
 
     res.json(result.rows);
@@ -121,10 +132,9 @@ app.get("/api/search", async (req, res) => {
 });
 async function getOrCreateTag(tagName) {
   // Sprawdzamy, czy tag o takiej nazwie już istnieje
-  const existing = await pool.query(
-    "SELECT id FROM tags WHERE name = $1",
-    [tagName]
-  );
+  const existing = await pool.query("SELECT id FROM tags WHERE name = $1", [
+    tagName,
+  ]);
 
   if (existing.rows.length > 0) {
     return existing.rows[0].id;
@@ -133,7 +143,7 @@ async function getOrCreateTag(tagName) {
   // Jeśli nie istnieje, tworzymy nowy i zwracamy jego id
   const inserted = await pool.query(
     "INSERT INTO tags (name) VALUES ($1) RETURNING id",
-    [tagName]
+    [tagName],
   );
 
   return inserted.rows[0].id;
@@ -148,7 +158,7 @@ async function getOrCreateAuthor(fullName) {
   // Sprawdzamy czy taki autor już istnieje
   const existing = await pool.query(
     "SELECT id FROM authors WHERE name = $1 AND surname = $2",
-    [name, surname]
+    [name, surname],
   );
 
   if (existing.rows.length > 0) {
@@ -158,7 +168,7 @@ async function getOrCreateAuthor(fullName) {
   // Jeśli nie istnieje, dodajemy go
   const inserted = await pool.query(
     "INSERT INTO authors (name, surname) VALUES ($1, $2) RETURNING id",
-    [name, surname]
+    [name, surname],
   );
 
   return inserted.rows[0].id;
@@ -177,18 +187,11 @@ app.post(
       console.log(req.body);
       console.log(req.files);
 
-      const {
-        title,
-        authors,
-        tags,
-        pages_from,
-        pages_to,
-        category,
-      } = req.body;
+      const { title, authors, tags, pages_from, pages_to, category } = req.body;
 
       const categoryResult = await pool.query(
         `SELECT id, symbol FROM categories WHERE category = $1`,
-        [category]
+        [category],
       );
 
       if (categoryResult.rows.length === 0) {
@@ -200,14 +203,11 @@ app.post(
       const categoryId = categoryResult.rows[0].id;
       const symbol = categoryResult.rows[0].symbol;
 
-      const year = new Date(Date.now())
-        .getFullYear()
-        .toString()
-        .slice(-2);
+      const year = new Date(Date.now()).getFullYear().toString().slice(-2);
 
       const countResult = await pool.query(
         `SELECT COUNT(*) FROM articles WHERE id_category = $1`,
-        [categoryId]
+        [categoryId],
       );
 
       const nextNumber = parseInt(countResult.rows[0].count) + 1;
@@ -216,13 +216,9 @@ app.post(
 
       const pdfFile = req.files.pdf[0];
 
-      const finalPdfName =
-        `${symbol}-${year}-${paddedNumber}.pdf`;
+      const finalPdfName = `${symbol}-${year}-${paddedNumber}.pdf`;
 
-      const finalPdfPath = path.join(
-        "DB/PdfFiles",
-        finalPdfName
-      );
+      const finalPdfPath = path.join("DB/PdfFiles", finalPdfName);
 
       fs.renameSync(pdfFile.path, finalPdfPath);
 
@@ -231,13 +227,9 @@ app.post(
       if (req.files.extraFile) {
         const file = req.files.extraFile[0];
 
-        const finalExtraName =
-          Date.now() + path.extname(file.originalname);
+        const finalExtraName = Date.now() + path.extname(file.originalname);
 
-        const finalExtraPath = path.join(
-          "DB/ExtraFiles",
-          finalExtraName
-        );
+        const finalExtraPath = path.join("DB/ExtraFiles", finalExtraName);
 
         fs.renameSync(file.path, finalExtraPath);
 
@@ -249,14 +241,7 @@ app.post(
         (title, pages_from, pages_to, id_category, pdf_path, extra_file_path)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id`,
-        [
-          title,
-          pages_from,
-          pages_to,
-          categoryId,
-          finalPdfPath,
-          extraFilePath,
-        ]
+        [title, pages_from, pages_to, categoryId, finalPdfPath, extraFilePath],
       );
 
       const articleId = result.rows[0].id;
@@ -265,7 +250,8 @@ app.post(
 
       for (const author of parsedAuthors) {
         // Skoro z konsoli widać, że 'author' to czysty string (np. "aut 1")
-        const authorText = typeof author === "object" ? author.fullName : author;
+        const authorText =
+          typeof author === "object" ? author.fullName : author;
 
         if (authorText && authorText.trim() !== "") {
           // 1. Pobierz ID istniejącego autora lub stwórz nowego
@@ -274,14 +260,14 @@ app.post(
           // 2. Zapisz powiązanie w tabeli łączącej
           await pool.query(
             "INSERT INTO author_articles (id_author, id_article) VALUES ($1, $2)",
-            [authorId, articleId]
+            [authorId, articleId],
           );
         }
       }
       const parsedTags = JSON.parse(tags || "[]");
 
       for (const tag of parsedTags) {
-        const tagText = typeof tag === "object" ? (tag.name || tag.text) : tag;
+        const tagText = typeof tag === "object" ? tag.name || tag.text : tag;
 
         // Ignorujemy puste stringi (np. gdy użytkownik dodał pole w formularzu, ale nic nie wpisał)
         if (tagText && tagText.trim() !== "") {
@@ -291,7 +277,7 @@ app.post(
           // Zapisujemy powiązanie artykułu z tagiem w tabeli article_tags
           await pool.query(
             "INSERT INTO article_tags (id_tag, id_article) VALUES ($1, $2)",
-            [tagId, articleId]
+            [tagId, articleId],
           );
         }
       }
@@ -300,18 +286,18 @@ app.post(
         message: "Artykuł dodany pomyślnie",
       });
 
-     // Zmień końcówkę bloku try-catch w swoim app.post na to:
+      // Zmień końcówkę bloku try-catch w swoim app.post na to:
     } catch (err) {
       console.error("DOKŁADNY BŁĄD SERWERA:", err);
-      
+
       // Zwracamy dokładną treść błędu do frontendu, żeby wyświetliła się w konsoli przeglądarki
-      res.status(500).json({ 
-        error: "Błąd serwera", 
+      res.status(500).json({
+        error: "Błąd serwera",
         details: err.message,
-        stack: err.stack 
+        stack: err.stack,
       });
     }
-  }
+  },
 );
 
 const PORT = process.env.PORT || 5000;
