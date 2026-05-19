@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 
-function Autorzy() {
-  const [autorzy, setAutorzy] = useState([""]);
+function Autorzy({ autorzy, setAutorzy }) {
 
   const handleAutorChange = (index, value) => {
     const nowiAutorzy = [...autorzy];
+
     nowiAutorzy[index] = value;
+
     setAutorzy(nowiAutorzy);
   };
 
@@ -15,36 +16,43 @@ function Autorzy() {
 
   const usunAutora = (index) => {
     const nowiAutorzy = autorzy.filter((_, i) => i !== index);
+
     setAutorzy(nowiAutorzy);
   };
 
   return (
     <div className="form-group">
-      <label className="control-label">Autorzy:</label>
+      <label className="control-label">
+        Autorzy:
+      </label>
 
       {autorzy.map((autor, index) => (
         <div key={index} className="d-flex gap-2 mb-2">
+
           <input
             type="text"
             className="form-control"
             value={autor}
-            onChange={(e) => handleAutorChange(index, e.target.value)}
+            onChange={(e) =>
+              handleAutorChange(index, e.target.value)
+            }
             placeholder={`Autor ${index + 1}`}
           />
 
           <button
             type="button"
-            className="btn btn-danger"
+            className="usun_autora_button"
             onClick={() => usunAutora(index)}
           >
             Usuń
           </button>
+
         </div>
       ))}
 
       <button
         type="button"
-        className="btn btn-secondary mt-2"
+        className="dodaj_autora_button"
         onClick={dodajAutora}
       >
         Dodaj autora

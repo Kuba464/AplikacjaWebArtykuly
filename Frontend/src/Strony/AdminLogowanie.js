@@ -14,6 +14,7 @@ function Login() {
     if (login === "admin" && haslo === "1234") {
       localStorage.setItem("zalogowany", "true");
       navigate("/admin");
+
     } else {
       alert("Nieprawidłowe dane");
     }
