@@ -13,7 +13,7 @@ function Searchbar() {
   };
 
   return (
-    <form className="search-wrapper" onSubmit={handleSubmit}>
+    <form className="search-wrapper" onChange={handleSubmit}>
       <input
         className="nav-right"
         type="text"

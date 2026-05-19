@@ -81,9 +81,7 @@ app.get("/api/search", async (req, res) => {
         ON aa.id_author = a.id
       WHERE
         title ILIKE $1
-        OR category ILIKE $1
-        OR a.name ILIKE $1
-        OR a.surname ILIKE $1
+        OR (a.name || ' ' || a.surname) ILIKE $1
       GROUP BY articles.id, category, symbol
       ORDER BY publication_date DESC;
       `,
