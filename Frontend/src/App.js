@@ -1,5 +1,5 @@
 import React from "react";
-import {BrowserRouter,Routes,Route,Link,useLocation} from "react-router-dom";
+import {BrowserRouter,Routes,Route} from "react-router-dom";
 import "./App.css";
 import Navbar from "./Components/Navbar.js";
 import Topbar from "./Components/Topbar.js"
@@ -15,8 +15,10 @@ import Redakcja from "./Strony/Redakcja";
 import Roczniki from "./Strony/Roczniki";
 import DodawanieEdytowanieArtykulu from "./Strony/DodawanieEdytowanieArtykulu";
 import Kontakt from "./Strony/Kontakt";
+import Szukaj from "./Strony/Szukaj";
 
 function App() {
+  
   return (
     <BrowserRouter>
     <Topbar />
@@ -33,6 +35,7 @@ function App() {
         <Route path="/redakcja" element={<Redakcja />} />
         <Route path="/roczniki" element={<Roczniki />} />
         <Route path="/admin/dodaj-edytuj-artykul" element={<DodawanieEdytowanieArtykulu />} />
+        <Route path="/szukaj" element={<Szukaj />} />
       </Routes>
     </BrowserRouter>
   );

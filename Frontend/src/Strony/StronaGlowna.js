@@ -8,7 +8,11 @@ import Categories from "../Components/Categories.js";
 function StronaGlowna() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  useEffect(() => {
+      if (localStorage.getItem("zalogowany") === "true") {
+        localStorage.removeItem("zalogowany");
+      }
+      }, []);
   useEffect(() => {
     fetch("http://localhost:5000/api/articles")
       .then((res) => res.json())
@@ -25,16 +29,16 @@ function StronaGlowna() {
   if (loading) {
     return <p>Ładowanie artykułów...</p>;
   }
-
-  localStorage.removeItem("zalogowany");
   return (
     <>
       <Siteheader />
       <Hero />
-      <div className="blog-grid">
-        {articles.map((article) => (
-          <Article key={article.id} article={article} />
-        ))}
+      <div className="blog">
+        <div className="blog-grid">
+          {articles.map((article) => (
+            <Article key={article.id} article={article} />
+          ))}
+        </div>
       </div>
       <Categories />
     </>

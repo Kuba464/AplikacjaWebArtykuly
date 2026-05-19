@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
     
 function AdminPanel() {
     const navigate = useNavigate();
 
-    if (localStorage.getItem("zalogowany") !== "true") {
-        navigate("/admin/logowanie");
-    }
+    useEffect(() => {
+        if (localStorage.getItem("zalogowany") !== "true") {
+            navigate("/admin/logowanie");
+        }
+    }, [navigate]);
     return (
         <div>
             <h1>Panel Administracyjny</h1> 
@@ -16,6 +18,9 @@ function AdminPanel() {
                 navigate("/strona-glowna");
             }}>
                 Wyloguj
+            </button>
+            <button onClick={() => navigate("/admin/dodaj-edytuj-artykul")}>
+                Dodaj nowy artykuł
             </button>
         </div>
     );

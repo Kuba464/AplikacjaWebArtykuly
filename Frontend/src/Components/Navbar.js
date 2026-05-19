@@ -1,17 +1,14 @@
 import React from "react";
 import {BrowserRouter,Routes,Route,Link,useLocation} from "react-router-dom";
-
+import Searchbar from "./Searchbar";
 
 import "../styles/global.css";
 
 function Navbar () {
   const location = useLocation();
-
+  
   // navbar ukryty na /admin
-  const hideNavbar = location.pathname === "/admin" || location.pathname === "/admin/logowanie" || location.pathname === "/admin/dodaj-edytuj-artykul";
-    if (location.pathname === "/admin/logowanie") {
-      localStorage.removeItem("zalogowany");
-    }
+  const hideNavbar = location.pathname === "/admin" || location.pathname === "/admin/logowanie" || location.pathname === "/admin/dodaj-edytuj-artykul";    
   return (
     <>
       {!hideNavbar && (
@@ -41,14 +38,7 @@ function Navbar () {
 
             <Link to="/kontakt">Kontakt</Link>
           </nav>
-
-          <div className="search-wrapper">
-            <input
-              className="nav-right"
-              type="text"
-              placeholder="Search for articles..."
-            />
-          </div>
+         <Searchbar />
         </div>
       )}
 
