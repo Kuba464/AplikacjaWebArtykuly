@@ -15,6 +15,7 @@ import Redakcja from "./Strony/Redakcja";
 import Roczniki from "./Strony/Roczniki";
 import DodawanieEdytowanieArtykulu from "./Strony/DodawanieEdytowanieArtykulu";
 import Kontakt from "./Strony/Kontakt";
+import Szukaj from "./Strony/Szukaj";
 
 function App() {
   
@@ -34,6 +35,7 @@ function App() {
         <Route path="/redakcja" element={<Redakcja />} />
         <Route path="/roczniki" element={<Roczniki />} />
         <Route path="/admin/dodaj-edytuj-artykul" element={<DodawanieEdytowanieArtykulu />} />
+        <Route path="/szukaj" element={<Szukaj />} />
       </Routes>
     </BrowserRouter>
   );
