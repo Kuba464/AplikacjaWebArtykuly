@@ -34,6 +34,7 @@ function App() {
         <Route path="/redakcja" element={<Redakcja />} />
         <Route path="/roczniki" element={<Roczniki />} />
         <Route path="/admin/dodaj-edytuj-artykul" element={<DodawanieEdytowanieArtykulu />} />
+        <Route path="/admin/edytuj-artykul/:id" element={<DodawanieEdytowanieArtykulu />} />
       </Routes>
     </BrowserRouter>
   );

@@ -8,7 +8,7 @@ function Navbar () {
   const location = useLocation();
   
   // navbar ukryty na /admin
-  const hideNavbar = location.pathname === "/admin" || location.pathname === "/admin/logowanie" || location.pathname === "/admin/dodaj-edytuj-artykul";    
+  const hideNavbar = location.pathname.startsWith("/admin");
   return (
     <>
       {!hideNavbar && (

@@ -1,10 +1,10 @@
 import React, { useRef, useState } from "react";
 
-function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting }) {
+function DragAndDropExtraFile({ ExtraFile, existingFilePath, onChange, onRemoveExisting }) {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Funkcja pomocnicza wyciągająca nazwę pliku ze ścieżki (np. z "DB/PdfFiles/MAT-26-001.pdf" wytnie "MAT-26-001.pdf")
+  // Funkcja pomocnicza wyciągająca nazwę pliku ze ścieżki (np. z "DB/ExtraFiles/12345.zip" wytnie "12345.zip")
   const getFileNameFromPath = (path) => {
     if (!path) return "";
     return path.substring(path.lastIndexOf("/") + 1);
@@ -12,24 +12,17 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
-    if (file && file.type === "application/pdf") {
+    if (file) {
       onChange(file);
-    } else if (file) {
-      alert("Możesz dodać tylko plik PDF!");
     }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-
     const file = e.dataTransfer.files[0];
-
-    if (file && file.type === "application/pdf") {
+    if (file) {
       onChange(file);
-    } else if (file) {
-      alert("Możesz dodać tylko plik PDF!");
     }
   };
 
@@ -42,12 +35,12 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
     setIsDragging(false);
   };
 
-  // Funkcja czyszcząca obecny wybór (zarówno nowy plik, jak i stary z bazy)
+  // Funkcja czyszcząca obecny plik (nowy lub ten z bazy)
   const handleClearFile = (e) => {
-    e.stopPropagation(); // Zapobiega otwarciu systemowego okna wyboru pliku przy kliknięciu "Zmień / Usuń"
+    e.stopPropagation(); // Zapobiega otwarciu okna wyboru pliku po kliknięciu "Usuń"
     onChange(null);      // Czyścimy nowo wybrany plik
     if (onRemoveExisting) {
-      onRemoveExisting(); // Czyścimy informację o pliku z bazy danych w stanie rodzica
+      onRemoveExisting(); // Informujemy komponent nadrzędny, że usuwamy też plik z bazy
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Resetujemy natywny input
@@ -56,7 +49,7 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
 
   return (
     <div className="drag-drop-area">
-      <label className="control-label">Dodaj plik PDF:</label>
+      <label className="control-label">Dodaj plik dodatkowy (opcjonalnie):</label>
 
       <div
         onClick={() => fileInputRef.current.click()}
@@ -70,36 +63,36 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
           cursor: "pointer",
           borderRadius: "10px",
           backgroundColor: isDragging ? "#f0f8ff" : "#fafafa",
+          position: "relative"
         }}
       >
-        {/* Sytuacja 1: Użytkownik upuścił/wybrał nowy plik lokalny */}
-        {pdfFile ? (
+        {/* Sytuacja 1: Użytkownik właśnie wybrał/upuścił nowy plik lokalny */}
+        {ExtraFile ? (
           <div>
-            <p style={{ color: "green", fontWeight: "bold" }}>Wybrano nowy plik do przesłania:</p>
-            <p>{pdfFile.name}</p>
+            <p style={{ color: "green", fontWeight: "bold" }}> Wybrano nowy plik do przesłania:</p>
+            <p>{ExtraFile.name}</p>
             <button type="button" onClick={handleClearFile} className="btn-remove">
               Zmień / Usuń
             </button>
           </div>
         ) : 
-        /* Sytuacja 2: Brak nowego pliku, ale mamy plik zapisany wcześniej w bazie danych */
+        /* Sytuacja 2: Brak nowego pliku, ale mamy plik zapisany wcześniej na serwerze */
         existingFilePath ? (
           <div>
-            <p style={{ color: "#1976d2", fontWeight: "bold" }}>Aktualny plik na serwerze:</p>
+            <p style={{ color: "#1976d2", fontWeight: "bold" }}> Aktualny plik na serwerze:</p>
             <p>{getFileNameFromPath(existingFilePath)}</p>
             <button type="button" onClick={handleClearFile} className="btn-remove">
               Zmień / Usuń stary plik
             </button>
           </div>
         ) : (
-          /* Sytuacja 3: Brak pliku (czysty formularz dodawania) */
-          <p>Przeciągnij plik PDF tutaj lub kliknij</p>
+          /* Sytuacja 3: Brak jakiegokolwiek pliku (nowy artykuł) */
+          <p>Przeciągnij plik dodatkowy tutaj lub kliknij</p>
         )}
       </div>
 
       <input
         type="file"
-        accept=".pdf"
         ref={fileInputRef}
         onChange={handleFileChange}
         style={{ display: "none" }}
@@ -108,4 +101,4 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
   );
 }
 
-export default DragAndDropPDF;
+export default DragAndDropExtraFile;
