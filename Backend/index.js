@@ -89,7 +89,6 @@ async function getOrCreateTag(tagName) {
 }
 
 async function getOrCreateAuthor(fullName) {
-  // Rozbijamy tekst na imię i nazwisko (np. "Jan Kowalski")
   const parts = fullName.trim().split(" ");
   const name = parts.length > 1 ? parts[0] : "";
   const surname = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
@@ -258,6 +257,149 @@ app.post(
         error: "Błąd serwera", 
         details: err.message,
         stack: err.stack 
+      });
+    }
+  }
+);
+
+app.delete("/api/articles/:id", async (req, res) => {
+  const articleId = req.params.id;
+  const query = `DELETE FROM articles WHERE id = $1`;
+
+  try {
+    await pool.query(query, [articleId]);
+    res.json({ message: "Artykuł został usunięty." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Nie można usunąć artykułu." });
+  }
+});
+
+// ZMIANA: Zamiast "/api/articles/:id" dajemy ten sam adres co w POST
+app.put(
+  "/api/article",
+  upload.fields([
+    { name: "pdf", maxCount: 1 },
+    { name: "extraFile", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    // ID pobieramy z req.body, bo leci wewnątrz FormData z frontendu
+    const articleId = req.body.id;
+
+    try {
+      if (!articleId) {
+        return res.status(400).json({ error: "Brak identyfikatora artykułu (id) w żądaniu" });
+      }
+
+      // 1. Wyciągamy dane tekstowe przesłane przez FormData
+      const {
+        title,
+        authors,
+        tags,
+        pages_from,
+        pages_to,
+        category,
+        clearPdf,
+        clearExtra,
+      } = req.body;
+
+      // 2. Pobieramy ID kategorii na podstawie jej nazwy tekstowej
+      const categoryResult = await pool.query(
+        `SELECT id FROM categories WHERE category = $1`,
+        [category]
+      );
+
+      if (categoryResult.rows.length === 0) {
+        return res.status(400).json({ error: "Niepoprawna kategoria" });
+      }
+      const categoryId = categoryResult.rows[0].id;
+
+      // 3. Pobieramy dotychczasowe ścieżki plików z bazy danych
+      const currentArticle = await pool.query(
+        "SELECT pdf_path, extra_file_path FROM articles WHERE id = $1",
+        [articleId]
+      );
+
+      if (currentArticle.rows.length === 0) {
+        return res.status(404).json({ error: "Nie znaleziono artykułu" });
+      }
+
+      let finalPdfPath = currentArticle.rows[0].pdf_path;
+      let finalExtraPath = currentArticle.rows[0].extra_file_path;
+
+      // 4. Obsługa usuwania / podmieniania pliku PDF
+      if (clearPdf === "true" || (req.files && req.files.pdf)) {
+        if (finalPdfPath && fs.existsSync(finalPdfPath)) {
+          fs.unlinkSync(finalPdfPath);
+        }
+        finalPdfPath = null;
+      }
+      if (req.files && req.files.pdf) {
+        finalPdfPath = req.files.pdf[0].path; 
+      }
+
+      // 5. Obsługa usuwania / podmieniania pliku dodatkowego
+      if (clearExtra === "true" || (req.files && req.files.extraFile)) {
+        if (finalExtraPath && fs.existsSync(finalExtraPath)) {
+          fs.unlinkSync(finalExtraPath);
+        }
+        finalExtraPath = null;
+      }
+      if (req.files && req.files.extraFile) {
+        finalExtraPath = req.files.extraFile[0].path;
+      }
+
+      // 6. Aktualizacja głównych danych artykułu
+      const updateQuery = `
+        UPDATE articles
+        SET title = $1, pages_from = $2, pages_to = $3, id_category = $4, pdf_path = $5, extra_file_path = $6
+        WHERE id = $7
+      `;
+      await pool.query(updateQuery, [
+        title,
+        pages_from,
+        pages_to,
+        categoryId,
+        finalPdfPath,
+        finalExtraPath,
+        articleId,
+      ]);
+
+      // 7. Aktualizacja Autorów (parsowanie tablicy JSON + brak duplikatów)
+      await pool.query("DELETE FROM author_articles WHERE id_article = $1", [articleId]);
+      
+      const rawAuthors = authors ? JSON.parse(authors) : [];
+      const uniqueAuthors = [...new Set(rawAuthors.map(a => a.trim()).filter(a => a !== ""))];
+
+      for (const authorText of uniqueAuthors) {
+        const authorId = await getOrCreateAuthor(authorText);
+        await pool.query(
+          "INSERT INTO author_articles (id_author, id_article) VALUES ($1, $2)",
+          [authorId, articleId]
+        );
+      }
+
+      // 8. Aktualizacja Tagów (parsowanie tablicy JSON + brak duplikatów)
+      await pool.query("DELETE FROM article_tags WHERE id_article = $1", [articleId]);
+      
+      const rawTags = tags ? JSON.parse(tags) : [];
+      const uniqueTags = [...new Set(rawTags.map(t => t.trim()).filter(t => t !== ""))];
+
+      for (const tagText of uniqueTags) {
+        const tagId = await getOrCreateTag(tagText);
+        await pool.query(
+          "INSERT INTO article_tags (id_tag, id_article) VALUES ($1, $2)",
+          [tagId, articleId]
+        );
+      }
+
+      res.json({ message: "Artykuł został zaktualizowany pomyślnie" });
+
+    } catch (err) {
+      console.error("BŁĄD PODCZAS EDYCJI:", err);
+      res.status(500).json({ 
+        error: "Nie można zaktualizować artykułu", 
+        details: err.message 
       });
     }
   }

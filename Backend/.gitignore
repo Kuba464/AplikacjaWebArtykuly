@@ -1,3 +1,5 @@
 node_modules/
 .env
 package-lock.json
+/DB/ExtraFiles/
+/DB/PdfFiles/npm
