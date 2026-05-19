@@ -17,6 +17,7 @@ app.get("/api/test", (req, res) => {
   res.json({
     message: "Backend lololo działa 🚀",
   });
+});
 app.use("DB/PdfFiles", express.static("DB/PdfFiles"));
 
 const storage = multer.diskStorage({
