@@ -5,6 +5,8 @@ import Autorzy from "../Components/Autorzy";
 import SlowaKluczowe from "../Components/SlowaKluczowe";
 import DragAndDropPDF from "../Components/DragDropPDF";
 import DragAndDropExtraFile from "../Components/DragDropExtraFile";
+import "../styles/global.css";
+import "../styles/Admin.css";
 
 function DodawanieEdytowanieArtykulu() {
   const navigate = useNavigate();
@@ -136,17 +138,45 @@ async function handleSubmit(e) {
   }
 
   return (
-    <div>
-      <button type="button" onClick={() => navigate("/admin")}>
-        Powrót do panelu admina
+  <div className="article-editor">
+    {/* HERO */}
+    <section className="editor-hero">
+      <p className="hero-eyebrow">
+        {isEditMode ? "Edycja artykułu" : "Nowy artykuł"}
+      </p>
+
+      <h1 className="hero-title">
+        {isEditMode ? "Edytuj artykuł" : "Dodaj nowy artykuł"}
+      </h1>
+
+      <p className="editor-desc">
+        Uzupełnij wszystkie informacje dotyczące publikacji, dodaj pliki oraz
+        przypisz odpowiednią kategorię.
+      </p>
+
+      <div className="editor-books">
+        <div className="b1"></div>
+        <div className="b2"></div>
+        <div className="b3"></div>
+        <div className="b4"></div>
+        <div className="b5"></div>
+      </div>
+    </section>
+
+    <div className="editor-wrapper">
+      <button
+        type="button"
+        className="back-button"
+        onClick={() => navigate("/admin")}
+      >
+        Powrót do panelu
       </button>
 
-      <h1>{isEditMode ? "Edytuj" : "Dodaj"} artykuł</h1>
-
       <form className="form-horizontal" onSubmit={handleSubmit}>
+        {/* TYTUŁ */}
         <div className="form-group">
           <label htmlFor="tytul" className="control-label">
-            Tytuł:
+            Tytuł
           </label>
 
           <input
@@ -163,58 +193,74 @@ async function handleSubmit(e) {
           />
         </div>
 
-        <Autorzy
-          autorzy={articleData.autorzy}
-          setAutorzy={(autorzy) =>
-            setArticleData({
-              ...articleData,
-              autorzy,
-            })
-          }
-        />
-
-        <SlowaKluczowe
-          slowaKluczowe={articleData.slowaKluczowe}
-          setSlowaKluczowe={(slowaKluczowe) =>
-            setArticleData({
-              ...articleData,
-              slowaKluczowe,
-            })
-          }
-        />
-
+        {/* AUTORZY */}
         <div className="form-group">
-          <label className="control-label">Zakres stron:</label>
+          <label className="control-label">Autorzy</label>
 
-          <input
-            type="text"
-            className="form-control"
-            value={articleData.zakresStronOd}
-            onChange={(e) =>
+          <Autorzy
+            autorzy={articleData.autorzy}
+            setAutorzy={(autorzy) =>
               setArticleData({
                 ...articleData,
-                zakresStronOd: e.target.value,
-              })
-            }
-          />
-
-          <label className="control-label">-</label>
-
-          <input
-            type="text"
-            className="form-control"
-            value={articleData.zakresStronDo}
-            onChange={(e) =>
-              setArticleData({
-                ...articleData,
-                zakresStronDo: e.target.value,
+                autorzy,
               })
             }
           />
         </div>
 
+        {/* SŁOWA KLUCZOWE */}
         <div className="form-group">
-          <label className="control-label">Kategoria:</label>
+          <label className="control-label">Słowa kluczowe</label>
+
+          <SlowaKluczowe
+            slowaKluczowe={articleData.slowaKluczowe}
+            setSlowaKluczowe={(slowaKluczowe) =>
+              setArticleData({
+                ...articleData,
+                slowaKluczowe,
+              })
+            }
+          />
+        </div>
+
+        {/* ZAKRES STRON */}
+        <div className="form-group">
+          <label className="control-label">Zakres stron</label>
+
+          <div className="pages-row">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Od"
+              value={articleData.zakresStronOd}
+              onChange={(e) =>
+                setArticleData({
+                  ...articleData,
+                  zakresStronOd: e.target.value,
+                })
+              }
+            />
+
+            <div className="pages-divider">—</div>
+
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Do"
+              value={articleData.zakresStronDo}
+              onChange={(e) =>
+                setArticleData({
+                  ...articleData,
+                  zakresStronDo: e.target.value,
+                })
+              }
+            />
+          </div>
+        </div>
+
+        {/* KATEGORIA */}
+        <div className="form-group">
+          <label className="control-label">Kategoria</label>
 
           <select
             className="form-control"
@@ -229,31 +275,73 @@ async function handleSubmit(e) {
             <option value="" disabled hidden>
               Wybierz kategorię
             </option>
+
             <option value="Matematyka">Matematyka</option>
             <option value="Informatyka">Informatyka</option>
             <option value="Dydaktyka">Dydaktyka</option>
-            <option value="Popularyzacja nauki">Popularyzacja nauki</option>
+            <option value="Popularyzacja nauki">
+              Popularyzacja nauki
+            </option>
           </select>
         </div>
 
-<DragAndDropPDF
-  pdfFile={articleData.pdfFile}
-  existingFilePath={articleData.existingPdfPath} // Przekazujemy ścieżkę z bazy
-  onChange={(file) => setArticleData({ ...articleData, pdfFile: file })}
-  onRemoveExisting={() => setArticleData({ ...articleData, existingPdfPath: null })} // Opcja usunięcia starego
-/>
-<DragAndDropExtraFile
-  ExtraFile={articleData.extraFile}
-  existingFilePath={articleData.existingExtraFilePath} // Przekazujemy ścieżkę z bazy
-  onChange={(file) => setArticleData({ ...articleData, extraFile: file })}
-  onRemoveExisting={() => setArticleData({ ...articleData, existingExtraFilePath: null })} // Opcja usunięcia starego
-/>
+        {/* PDF */}
+        <div className="form-group">
+          <label className="control-label">Plik PDF</label>
+
+          <div className="upload-wrapper">
+            <DragAndDropPDF
+              pdfFile={articleData.pdfFile}
+              existingFilePath={articleData.existingPdfPath}
+              onChange={(file) =>
+                setArticleData({
+                  ...articleData,
+                  pdfFile: file,
+                })
+              }
+              onRemoveExisting={() =>
+                setArticleData({
+                  ...articleData,
+                  existingPdfPath: null,
+                })
+              }
+            />
+          </div>
+        </div>
+
+        {/* DODATKOWY PLIK */}
+        <div className="form-group">
+          <label className="control-label">
+            Dodatkowy plik
+          </label>
+
+          <div className="upload-wrapper">
+            <DragAndDropExtraFile
+              ExtraFile={articleData.extraFile}
+              existingFilePath={articleData.existingExtraFilePath}
+              onChange={(file) =>
+                setArticleData({
+                  ...articleData,
+                  extraFile: file,
+                })
+              }
+              onRemoveExisting={() =>
+                setArticleData({
+                  ...articleData,
+                  existingExtraFilePath: null,
+                })
+              }
+            />
+          </div>
+        </div>
+
         <button type="submit" className="save-button">
           {isEditMode ? "Zapisz zmiany" : "Dodaj artykuł"}
         </button>
       </form>
     </div>
-  );
+  </div>
+);
 }
 
 export default DodawanieEdytowanieArtykulu;

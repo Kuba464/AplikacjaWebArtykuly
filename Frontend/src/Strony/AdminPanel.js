@@ -4,16 +4,21 @@ import Article from "../Components/Article";
 import UsunArtykul from "../Components/DelArticle";
 import EditArticle from "../Components/EditArticle";
 
+import "../styles/global.css";
+import "../styles/Admin.css";
+
 function AdminPanel() {
   const navigate = useNavigate();
+
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (localStorage.getItem("zalogowany") !== "true") {
       navigate("/admin/logowanie");
     }
   }, [navigate]);
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetch("http://localhost:5000/api/articles")
       .then((res) => res.json())
@@ -28,48 +33,94 @@ function AdminPanel() {
   }, []);
 
   if (loading) {
-    return <p>Ładowanie artykułów...</p>;
+    return (
+      <div className="admin-loading">
+        <p>Ładowanie artykułów...</p>
+      </div>
+    );
   }
+
   return (
-    <div>
-      <h1>Panel Administracyjny</h1>
-      <p>
-        Witaj w panelu administracyjnym! Tutaj możesz zarządzać artykułami,
-        użytkownikami i innymi zasobami aplikacji.
-      </p>
-      <button
-        onClick={() => {
-          localStorage.removeItem("zalogowany");
-          navigate("/strona-glowna");
-        }}
-      >
-        Wyloguj
-      </button>
-      <button onClick={() => navigate("/admin/dodaj-edytuj-artykul")}>
-        Dodaj nowy artykuł
-      </button>
-      <div className="blog">
+    <div className="admin-panel">
+      {/* HERO */}
+      <section className="admin-hero">
+        <div className="admin-hero-content">
+          <p className="site-title">Panel administracyjny</p>
+
+          <p className="admin-desc">
+            Zarządzaj artykułami i zawartością strony <br />
+            Dodawaj nowe publikacje, edytuj istniejące artykuły oraz zarządzaj
+            treściami w intuicyjnym panelu administracyjnym.
+          </p>
+
+          <div className="admin-actions">
+            <button
+              className="btn-dark"
+              onClick={() => navigate("/admin/dodaj-edytuj-artykul")}
+            >
+              Dodaj nowy artykuł
+            </button>
+
+            <button
+              className="btn-outline"
+              onClick={() => {
+                localStorage.removeItem("zalogowany");
+                navigate("/strona-glowna");
+              }}
+            >
+              Wyloguj
+            </button>
+          </div>
+        </div>
+
+        <div className="deco-books">
+          <div className="dbs dbs1"></div>
+          <div className="dbs dbs2"></div>
+          <div className="dbs dbs3"></div>
+          <div className="dbs dbs4"></div>
+          <div className="dbs dbs5"></div>
+        </div>
+      </section>
+
+      {/* BLOG / ARTICLES */}
+      <section className="blog">
+        <div className="sec-label">Artykuły</div>
+
+        <h2 className="sec-title">Lista publikacji</h2>
+
+        <p className="sec-desc">
+          Poniżej znajdziesz wszystkie dostępne artykuły wraz z możliwością ich
+          edycji lub usunięcia.
+        </p>
+
         <div className="blog-grid">
           {articles.map((article) => (
-            <div key={article.id}>
+            <div className="admin-article-card" key={article.id}>
               <Article article={article} />
-              <UsunArtykul
-                article={article}
-                onDelete={() => {
-                  setArticles(articles.filter((a) => a.id !== article.id));
-                }}
-              />
-              <EditArticle
-                article={article}
-                onEdit={(id) => {
-                  navigate(`/admin/edytuj-artykul/${id}`);
-                }}
-              />
+
+              <div className="admin-card-actions">
+                <EditArticle
+                  article={article}
+                  onEdit={(id) => {
+                    navigate(`/admin/edytuj-artykul/${id}`);
+                  }}
+                />
+
+                <UsunArtykul
+                  article={article}
+                  onDelete={() => {
+                    setArticles(
+                      articles.filter((a) => a.id !== article.id)
+                    );
+                  }}
+                />
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
+
 export default AdminPanel;
