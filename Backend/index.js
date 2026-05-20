@@ -137,6 +137,26 @@ ORDER BY publication_date DESC;
     res.status(500).json({ error: "Błąd serwera" });
   }
 });
+
+app.get("/api/roczniki", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT DISTINCT
+      EXTRACT(YEAR FROM publication_date) as year
+      FROM articles
+	    ORDER BY year DESC;
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+});
+
+
+
+// ADMIN
 async function getOrCreateTag(tagName) {
   // Sprawdzamy, czy tag o takiej nazwie już istnieje
   const existing = await pool.query("SELECT id FROM tags WHERE name = $1", [
