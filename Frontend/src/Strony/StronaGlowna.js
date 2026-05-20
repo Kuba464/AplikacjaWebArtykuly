@@ -17,7 +17,10 @@ function StronaGlowna() {
     fetch("http://localhost:5000/api/articles")
       .then((res) => res.json())
       .then((data) => {
-        setArticles(data);
+        const currentYear = new Date().getFullYear();
+        const byYear = (year) => data.filter(a => new Date(a.publication_date).getFullYear() === year);
+        const filtered = byYear(currentYear).length > 0 ? byYear(currentYear) : byYear(currentYear - 1);
+        setArticles(filtered);
         setLoading(false);
       })
       .catch((err) => {
