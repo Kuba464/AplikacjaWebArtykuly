@@ -1,4 +1,6 @@
 import React from "react";
+import "../styles/Admin.css"
+import { BsTrashFill } from "react-icons/bs";
 
 function Autorzy({ autorzy, setAutorzy }) {
 
@@ -29,30 +31,30 @@ function Autorzy({ autorzy, setAutorzy }) {
       {autorzy.map((autor, index) => (
         <div key={index} className="d-flex gap-2 mb-2">
 
-          <input
-            type="text"
-            className="form-control"
-            value={autor}
-            onChange={(e) =>
-              handleAutorChange(index, e.target.value)
-            }
-            placeholder={`Autor ${index + 1}`}
-          />
+          <div className="author-row">
+            <input style={{ textTransform: "none" }}
+              type="text"
+              className="authors-key-group"
+              value={autor}
+              onChange={(e) => handleAutorChange(index, e.target.value)}
+              placeholder={`Autor ${index + 1}`}
+            />
 
-          <button
-            type="button"
-            className="usun_autora_button"
-            onClick={() => usunAutora(index)}
-          >
-            Usuń
-          </button>
+            <button
+              type="button"
+              className="authors-key-button"
+              onClick={() => usunAutora(index)}
+            >
+              <BsTrashFill />
+            </button>
+          </div>
 
         </div>
       ))}
 
       <button
         type="button"
-        className="dodaj_autora_button"
+        className="back-button1"
         onClick={dodajAutora}
       >
         Dodaj autora

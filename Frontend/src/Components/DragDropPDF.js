@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import "../styles/Admin.css"
 
 function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting }) {
   const fileInputRef = useRef(null);
@@ -77,7 +78,7 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
           <div>
             <p style={{ color: "green", fontWeight: "bold" }}>Wybrano nowy plik do przesłania:</p>
             <p>{pdfFile.name}</p>
-            <button type="button" onClick={handleClearFile} className="btn-remove">
+            <button type="button" onClick={handleClearFile} className="save-button">
               Zmień / Usuń
             </button>
           </div>
@@ -85,15 +86,15 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
         /* Sytuacja 2: Brak nowego pliku, ale mamy plik zapisany wcześniej w bazie danych */
         existingFilePath ? (
           <div>
-            <p style={{ color: "#1976d2", fontWeight: "bold" }}>Aktualny plik na serwerze:</p>
+            <p style={{ color: "#c94a1a", fontWeight: "bold" }}>Aktualny plik na serwerze:</p>
             <p>{getFileNameFromPath(existingFilePath)}</p>
-            <button type="button" onClick={handleClearFile} className="btn-remove">
+            <button type="button" onClick={handleClearFile} className="save-button">
               Zmień / Usuń stary plik
             </button>
           </div>
         ) : (
           /* Sytuacja 3: Brak pliku (czysty formularz dodawania) */
-          <p>Przeciągnij plik PDF tutaj lub kliknij</p>
+          <p style={{ color: "#636363", fontWeight: "bold" }}>Przeciągnij plik PDF tutaj lub kliknij</p>
         )}
       </div>
 
