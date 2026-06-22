@@ -334,6 +334,105 @@ footer { padding: 60px 0; }
 .footer-copy a { color: var(--muted); transition: color .18s; }
 .footer-copy a:hover { color: var(--ink); }
 
+/* ROCZNIKI */
+
+.rocznik-section {
+  padding: 50px 60px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+
+.rocznik-section:nth-child(even) {
+  background: var(--bg);
+}
+
+.rocznik-section .blog-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.rocznik-title {
+  grid-column: 1 / -1;
+  font-family: var(--serif);
+  font-size: 38px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: center;
+  margin: 0 0 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.rocznik-title::before,
+.rocznik-title::after {
+  content: "";
+  display: inline-block;
+  width: 34px;
+  height: 1.5px;
+  background: var(--accent);
+  vertical-align: middle;
+  margin: 0 14px;
+}
+
+.rocznik-section .article {
+  background: var(--white);
+  min-height: 220px;
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+
+.rocznik-section .article:hover {
+  background: var(--bg);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.06);
+}
+
+/* gdy w danym roczniku nie ma artykułów */
+.brak-artykulow {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 300;
+  padding: 36px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* RESPONSYWNOŚĆ */
+@media (max-width: 900px) {
+  .rocznik-section {
+    padding: 40px 28px;
+  }
+
+  .rocznik-section .blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rocznik-title {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 520px) {
+  .rocznik-section {
+    padding: 32px 18px;
+  }
+
+  .rocznik-title {
+    font-size: 28px;
+  }
+
+  .rocznik-title::before,
+  .rocznik-title::after {
+    width: 20px;
+    margin: 0 8px;
+  }
+}
+
 @media (max-width: 900px) {
   .cat-grid { grid-template-columns: repeat(2, 1fr); }
   .blog-grid, .redakcja-grid, .recenzenci-grid { grid-template-columns: 1fr; }

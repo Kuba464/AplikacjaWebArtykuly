@@ -46,14 +46,15 @@ function Roczniki() {
 
   for (let i = 0; i < roczniki.length; i++) {
     elements.push(
-      <div key={i} className="blog">
+      <div key={i} className="blog rocznik-section">
         <div className="blog-grid">
-          <h1>{roczniki[i].year}</h1>
+          <h1 className="rocznik-title">{roczniki[i].year}</h1>
 
           {articles
             .filter(
               (article) =>
-                String(new Date(article.publication_date).getFullYear()) === String(roczniki[i].year),
+                String(new Date(article.publication_date).getFullYear()) ===
+                String(roczniki[i].year),
             )
             .map((article) => (
               <Article key={article.id} article={article} />
@@ -65,7 +66,14 @@ function Roczniki() {
 
   return (
     <>
-      <Siteheader />
+      <div className="recenzje-hero">
+        <div className="sec-label">Zbiory archiwalne</div>
+        <h1 className="sec-title">Roczniki</h1>
+        <p className="sec-desc">
+          Roczniki gromadzą publikacje z poszczególnych lat, umożliwiając
+          wygodne przeglądanie dorobku naukowego naszego czasopisma.
+        </p>
+      </div>
 
       {elements}
     </>
