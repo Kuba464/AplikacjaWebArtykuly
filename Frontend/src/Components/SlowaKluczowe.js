@@ -1,4 +1,5 @@
 import React from "react";
+import { BsTrashFill } from "react-icons/bs";
 
 function SlowaKluczowe({
   slowaKluczowe,
@@ -44,10 +45,10 @@ function SlowaKluczowe({
           key={index}
           className="d-flex gap-2 mb-2"
         >
-
+          <div className="author-row ">
           <input
             type="text"
-            className="form-control"
+            className="authors-key-group"
             value={slowo}
             onChange={(e) =>
               handleSlowoChange(
@@ -60,18 +61,18 @@ function SlowaKluczowe({
 
           <button
             type="button"
-            className="btn btn-danger"
+            className="authors-key-button"
             onClick={() => usunSlowo(index)}
           >
-            Usuń
+            <BsTrashFill />
           </button>
-
+        </div>
         </div>
       ))}
 
       <button
         type="button"
-        className="btn btn-secondary mt-2"
+        className="back-button1"
         onClick={dodajSlowo}
       >
         Dodaj słowo kluczowe
