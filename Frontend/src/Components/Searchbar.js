@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Searchbar() {
   const [query, setQuery] = useState("");
-
-   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    navigate(`/szukaj?q=${query}`);
-  }, [query]);
+    const text = query.trim();
+
+    if (text === "") {
+      if (location.pathname === "/szukaj") {
+        navigate("/szukaj", { replace: true });
+      }
+      return;
+    }
+
+    navigate(`/szukaj?q=${encodeURIComponent(text)}`);
+  }, [query, navigate, location.pathname]);
 
   return (
     <form className="search-wrapper">
@@ -18,7 +27,6 @@ function Searchbar() {
         placeholder="Search for articles..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        onBlur={() => setQuery("")}
       />
     </form>
   );
