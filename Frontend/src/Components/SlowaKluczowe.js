@@ -46,7 +46,7 @@ function SlowaKluczowe({
           className="d-flex gap-2 mb-2"
         >
           <div className="author-row ">
-          <input
+          <input style={{ textTransform: "none" }}
             type="text"
             className="authors-key-group"
             value={slowo}

@@ -15,10 +15,15 @@ app.use(express.json());
 
 app.get("/api/test", (req, res) => {
   res.json({
-    message: "Backend lololo działa 🚀",
+    message: "Backend działa",
   });
 });
-app.use("DB/PdfFiles", express.static("DB/PdfFiles"));
+app.use(
+  "/DB/PdfFiles",
+  express.static(path.join(__dirname, "/DB/PdfFiles"))
+);
+console.log("__dirname =", __dirname);
+console.log("static path =", path.join(__dirname, "DB/PdfFiles"));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -244,7 +249,7 @@ app.post(
 
       const finalPdfName = `${symbol}-${year}-${paddedNumber}.pdf`;
 
-      const finalPdfPath = path.join("DB/PdfFiles", finalPdfName);
+      //const finalPdfPath = path.join("DB/PdfFiles", finalPdfName);
 
       fs.renameSync(pdfFile.path, finalPdfPath);
 
@@ -253,9 +258,9 @@ app.post(
       if (req.files.extraFile) {
         const file = req.files.extraFile[0];
 
-        const finalExtraName = Date.now() + path.extname(file.originalname);
+        const finalExtraName = `${symbol}-${year}-${paddedNumber}-extra${path.extname(file.originalname)}`;
 
-        const finalExtraPath = path.join("DB/ExtraFiles", finalExtraName);
+        //const finalExtraPath = path.join("DB/ExtraFiles", finalExtraName);
 
         fs.renameSync(file.path, finalExtraPath);
 

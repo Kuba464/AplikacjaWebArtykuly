@@ -179,7 +179,7 @@ async function handleSubmit(e) {
             Tytuł
           </label>
 
-          <input
+          <input style={{ textTransform: "none" }}
             type="text"
             className="form-group"
             id="tytul"
@@ -197,7 +197,7 @@ async function handleSubmit(e) {
         <div className="form-group1">
           <label className="control-label">Autorzy</label>
 
-          <Autorzy
+          <Autorzy 
             autorzy={articleData.autorzy}
             setAutorzy={(autorzy) =>
               setArticleData({
@@ -277,10 +277,10 @@ async function handleSubmit(e) {
               Wybierz kategorię
             </option>
 
-            <option value="Matematyka">Matematyka</option>
-            <option value="Informatyka">Informatyka</option>
-            <option value="Dydaktyka">Dydaktyka</option>
-            <option value="Popularyzacja nauki">
+            <option style={{ textTransform: "none" }} value="Matematyka">Matematyka</option>
+            <option style={{ textTransform: "none" }} value="Informatyka">Informatyka</option>
+            <option style={{ textTransform: "none" }} value="Dydaktyka">Dydaktyka</option>
+            <option style={{ textTransform: "none" }} value="Popularyzacja nauki">
               Popularyzacja nauki
             </option>
             </div>

@@ -95,6 +95,7 @@ function AdminPanel() {
               Dodaj nowy artykuł
             </button>
           </div>
+          <p></p>
         <div className="blog-grid">
           {articles.map((article) => (
             <div className="admin-article-card" key={article.id}>

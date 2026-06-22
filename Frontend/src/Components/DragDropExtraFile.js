@@ -88,7 +88,7 @@ function DragAndDropExtraFile({ ExtraFile, existingFilePath, onChange, onRemoveE
           </div>
         ) : (
           /* Sytuacja 3: Brak jakiegokolwiek pliku (nowy artykuł) */
-          <p style={{ color: "#353535", fontWeight: "bold" }} >Przeciągnij plik dodatkowy tutaj lub kliknij</p>
+          <p style={{ color: "#636363", fontWeight: "bold" }} >Przeciągnij plik dodatkowy tutaj lub kliknij</p>
         )}
       </div>
 
