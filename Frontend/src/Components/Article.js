@@ -1,10 +1,10 @@
 import React from "react";
 
 function Article({ article }) {
-  // Bezpieczne wyciągnięcie nazwy pliku PDF
+  // PDF
   const pdfFileName = article.pdf_path
-    ?.replace(/\\/g, "/")   // Windows \ → /
-    .match(/[^/]+$/)?.[0];  // tylko nazwa pliku
+    ?.replace(/\\/g, "/")
+    .match(/[^/]+$/)?.[0];
 
   const handleOpenPdf = () => {
     if (!pdfFileName) return;
@@ -15,8 +15,23 @@ function Article({ article }) {
     );
   };
 
+  // EXTRA FILE
+  const extraFileName = article.extra_file_path
+    ?.replace(/\\/g, "/")
+    .match(/[^/]+$/)?.[0];
+
+  const handleOpenExtra = () => {
+    if (!extraFileName) return;
+
+    window.open(
+      `http://localhost:5000/DB/ExtraFiles/${extraFileName}`,
+      "_blank"
+    );
+  };
+
   return (
     <div className="article">
+
       <div className="art-tags">
         <span className="art-tag">{article.category}</span>
       </div>
@@ -33,18 +48,34 @@ function Article({ article }) {
         {article.pages_from}–{article.pages_to}
       </p>
 
-      {article.tags && (
-        <div className="art-tags2">
-          {article.tags.split(", ").map((tag, index) => (
-            <span className="art-tag2" key={index}>
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+      {/* TAGS + EXTRA FILE ROW */}
+      <div className="tagsandextrefile">
+
+        {/* TAGS */}
+        {article.tags && (
+          <div className="art-tags2">
+            {article.tags.split(", ").map((tag, index) => (
+              <span className="art-tag2" key={index}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* EXTRA FILE BUTTON (tylko jeśli istnieje) */}
+        {extraFileName && (
+          <button
+            className="extra-file-btn"
+            onClick={handleOpenExtra}
+          >
+            Extra file
+          </button>
+        )}
+
+      </div>
 
       <div className="art-meta">
-        <span>{article.publication_date}</span>
+          <span>{article.publication_date?.split("T")[0]}</span>
 
         <div className="authors">
           {article.authors.split(", ").map((author, index) => (
@@ -55,6 +86,7 @@ function Article({ article }) {
           ))}
         </div>
       </div>
+
     </div>
   );
 }

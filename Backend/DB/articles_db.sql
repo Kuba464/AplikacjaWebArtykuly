@@ -26,7 +26,7 @@ create table if not exists articles (
 	publication_date date not null default current_date,
 	id_category int references categories(id) on delete set null,
 	pdf_path varchar(200) not null,
-	extra_file_path varchar(200) not null
+	extra_file_path varchar(200) default null
 );
 
 create table if not exists stats (

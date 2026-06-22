@@ -22,6 +22,11 @@ app.use(
   "/DB/PdfFiles",
   express.static(path.join(__dirname, "/DB/PdfFiles"))
 );
+
+app.use(
+  "/DB/ExtraFiles",
+  express.static(path.join(__dirname, "DB/ExtraFiles"))
+);
 console.log("__dirname =", __dirname);
 console.log("static path =", path.join(__dirname, "DB/PdfFiles"));
 
@@ -249,7 +254,7 @@ app.post(
 
       const finalPdfName = `${symbol}-${year}-${paddedNumber}.pdf`;
 
-      //const finalPdfPath = path.join("DB/PdfFiles", finalPdfName);
+      const finalPdfPath = path.join("DB/PdfFiles", finalPdfName);
 
       fs.renameSync(pdfFile.path, finalPdfPath);
 
@@ -260,7 +265,7 @@ app.post(
 
         const finalExtraName = `${symbol}-${year}-${paddedNumber}-extra${path.extname(file.originalname)}`;
 
-        //const finalExtraPath = path.join("DB/ExtraFiles", finalExtraName);
+        const finalExtraPath = path.join("DB/ExtraFiles", finalExtraName);
 
         fs.renameSync(file.path, finalExtraPath);
 

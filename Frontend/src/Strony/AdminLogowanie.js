@@ -26,7 +26,7 @@ return (
     <form className="login-panel" onSubmit={handleLogin}>
       <h2 className="login-title">Logowanie</h2>
 
-      <input
+      <input style={{ textTransform: "none" }}
         className="login-input"
         type="text"
         placeholder="Login"
@@ -34,7 +34,7 @@ return (
         onChange={(e) => setLogin(e.target.value)}
       />
 
-      <input
+      <input style={{ textTransform: "none" }}
         className="login-input"
         type="password"
         placeholder="Hasło"
