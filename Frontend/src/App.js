@@ -16,6 +16,7 @@ import Roczniki from "./Strony/Roczniki";
 import DodawanieEdytowanieArtykulu from "./Strony/DodawanieEdytowanieArtykulu";
 import Kontakt from "./Strony/Kontakt";
 import Szukaj from "./Strony/Szukaj";
+import Footer from "./Components/Footer.js";
 
 function App() {
   
@@ -38,6 +39,7 @@ function App() {
         <Route path="/admin/edytuj-artykul/:id" element={<DodawanieEdytowanieArtykulu />} />
         <Route path="/szukaj" element={<Szukaj />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

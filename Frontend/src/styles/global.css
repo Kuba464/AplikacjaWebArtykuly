@@ -440,3 +440,23 @@ footer { padding: 60px 0; }
   .navbar { padding: 0 20px; }
   nav { gap: 20px; }
 }
+
+@media (max-width: 900px) {
+  .onas-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .onas-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .onas-stat {
+    padding: 26px 18px;
+  }
+
+  .onas-stat-liczba {
+    font-size: 34px;
+  }
+}
