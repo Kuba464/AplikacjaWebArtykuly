@@ -5,6 +5,8 @@ function DragAndDropExtraFile({ ExtraFile, existingFilePath, onChange, onRemoveE
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
   // Funkcja pomocnicza wyciągająca nazwę pliku ze ścieżki (np. z "DB/ExtraFiles/12345.zip" wytnie "12345.zip")
   const getFileNameFromPath = (path) => {
     if (!path) return "";
@@ -13,18 +15,18 @@ function DragAndDropExtraFile({ ExtraFile, existingFilePath, onChange, onRemoveE
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      onChange(file);
-    }
+    if (validateFile(file)) {
+    onChange(file);
+  }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file) {
-      onChange(file);
-    }
+    if (validateFile(file)) {
+    onChange(file);
+  }
   };
 
   const handleDragOver = (e) => {
@@ -36,6 +38,44 @@ function DragAndDropExtraFile({ ExtraFile, existingFilePath, onChange, onRemoveE
     setIsDragging(false);
   };
 
+
+const validateFile = (file) => {
+  if (!file) return false;
+
+  const fileName = file.name.toLowerCase();
+
+  const blockedExtensions = [
+    ".exe",
+    ".bat",
+    ".cmd",
+    ".sh",
+    ".js",
+    ".php",
+    ".html",
+    ".htm",
+    ".vbs",
+    ".msi",
+    ".jar",
+    ".scr",
+    ".ps1",
+  ];
+
+  const isBlocked = blockedExtensions.some((ext) =>
+    fileName.endsWith(ext)
+  );
+
+  if (isBlocked) {
+    alert("Ten typ pliku jest niedozwolony ze względów bezpieczeństwa.");
+    return false;
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    alert("Plik może mieć maksymalnie 10 MB.");
+    return false;
+  }
+
+  return true;
+};
   // Funkcja czyszcząca obecny plik (nowy lub ten z bazy)
   const handleClearFile = (e) => {
     e.stopPropagation(); // Zapobiega otwarciu okna wyboru pliku po kliknięciu "Usuń"
