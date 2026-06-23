@@ -10,6 +10,18 @@
   --serif: 'Playfair Display', Georgia, serif;
   --sans: 'Jost', sans-serif;
 }
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 body {
   font-family: var(--sans);
