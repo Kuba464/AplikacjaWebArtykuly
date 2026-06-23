@@ -9,6 +9,8 @@ function Article({ article }) {
   const handleOpenPdf = () => {
     if (!pdfFileName) return;
 
+    fetch(`http://localhost:5000/api/stats/${article.id}`, { method: "POST" });
+
     window.open(
       `http://localhost:5000/DB/PdfFiles/${pdfFileName}`,
       "_blank"

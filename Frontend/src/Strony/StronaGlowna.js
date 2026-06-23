@@ -9,11 +9,6 @@ function StronaGlowna() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-      if (localStorage.getItem("zalogowany") === "true") {
-        localStorage.removeItem("zalogowany");
-      }
-      }, []);
-  useEffect(() => {
     fetch("http://localhost:5000/api/articles")
       .then((res) => res.json())
       .then((data) => {

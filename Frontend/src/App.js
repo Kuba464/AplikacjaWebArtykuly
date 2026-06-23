@@ -16,6 +16,7 @@ import Roczniki from "./Strony/Roczniki";
 import DodawanieEdytowanieArtykulu from "./Strony/DodawanieEdytowanieArtykulu";
 import Kontakt from "./Strony/Kontakt";
 import Szukaj from "./Strony/Szukaj";
+import Statystyki from "./Strony/Statystyki";
 
 function App() {
   
@@ -37,6 +38,7 @@ function App() {
         <Route path="/admin/dodaj-edytuj-artykul" element={<DodawanieEdytowanieArtykulu />} />
         <Route path="/admin/edytuj-artykul/:id" element={<DodawanieEdytowanieArtykulu />} />
         <Route path="/szukaj" element={<Szukaj />} />
+        <Route path="/admin/statystyki" element={<Statystyki />} />
       </Routes>
     </BrowserRouter>
   );

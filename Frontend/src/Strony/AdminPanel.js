@@ -94,6 +94,13 @@ function AdminPanel() {
             >
               Dodaj nowy artykuł
             </button>
+
+            <button
+              className="back-button3"
+              onClick={() => navigate("/admin/statystyki")}
+            >
+              Statystyki otwarć
+            </button>
           </div>
           <p></p>
         <div className="blog-grid">
