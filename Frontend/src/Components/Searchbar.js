@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Searchbar() {
@@ -6,8 +6,11 @@ function Searchbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const text = query.trim();
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+
+    const text = value.trim();
 
     if (text === "") {
       if (location.pathname === "/szukaj") {
@@ -17,7 +20,7 @@ function Searchbar() {
     }
 
     navigate(`/szukaj?q=${encodeURIComponent(text)}`);
-  }, [query, navigate, location.pathname]);
+  };
 
   return (
     <form className="search-wrapper">
@@ -26,7 +29,7 @@ function Searchbar() {
         type="text"
         placeholder="Search for articles..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={handleChange}
       />
     </form>
   );

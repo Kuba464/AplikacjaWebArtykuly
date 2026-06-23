@@ -318,7 +318,7 @@ nav a:hover, nav a:focus { border-bottom-color: var(--line); }
 /* FOOTER */
 
 footer {
-  margin-top: 50px;
+  margin-top: auto;
   padding: 20px 30px;
   background: var(--bg);
   border-top: 1px solid var(--border);
@@ -451,6 +451,53 @@ footer {
   padding: 36px;
   border: 1px solid var(--border);
   background: var(--bg);
+}
+
+/* WYNIKI WYSZUKIWANIA */
+
+.search-page {
+  padding: 0 60px 70px;
+}
+
+.search-hero {
+  padding: 64px 0 46px;
+  text-align: center;
+}
+
+.search-query {
+  display: inline-block;
+  margin-top: -22px;
+  padding: 8px 22px;
+
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent);
+
+  border-bottom: 1px solid var(--accent);
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 36px;
+
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 300;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .search-page {
+    padding: 0 28px 56px;
+  }
+
+  .search-query {
+    font-size: 20px;
+  }
 }
 
 /* RESPONSYWNOŚĆ */
