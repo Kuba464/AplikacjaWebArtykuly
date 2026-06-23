@@ -47,7 +47,7 @@ function AdminPanel() {
               className="back-button2"
               onClick={() => {
                 localStorage.removeItem("token");
-                navigate("/strona-glowna");
+                navigate("/");
               }}
             >
               Wyloguj
