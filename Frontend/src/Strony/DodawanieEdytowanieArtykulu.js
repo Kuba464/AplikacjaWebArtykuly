@@ -82,337 +82,354 @@ function DodawanieEdytowanieArtykulu() {
   }, [id, isEditMode]);
 
   function validateForm() {
-  const errors = [];
+    const errors = [];
 
-  const title = String(articleData.tytul).trim();
-  const pagesFromText = String(articleData.zakresStronOd).trim();
-  const pagesToText = String(articleData.zakresStronDo).trim();
+    const title = String(articleData.tytul).trim();
+    const pagesFromText = String(articleData.zakresStronOd).trim();
+    const pagesToText = String(articleData.zakresStronDo).trim();
 
-  const pagesFrom = Number(pagesFromText);
-  const pagesTo = Number(pagesToText);
+    const pagesFrom = Number(pagesFromText);
+    const pagesTo = Number(pagesToText);
 
-  if (title === "") {
-    errors.push("Uzupełnij tytuł artykułu.");
-  }
-
-  if (title.length < 3) {
-    errors.push("Tytuł musi mieć co najmniej 3 znaki.");
-  }
-
-  if (articleData.autorzy.length === 0) {
-    errors.push("Dodaj przynajmniej jednego autora.");
-  }
-
-  if (articleData.slowaKluczowe.length === 0) {
-    errors.push("Dodaj przynajmniej jedno słowo kluczowe.");
-  }
-
-  if (pagesFromText === "") {
-    errors.push("Uzupełnij stronę początkową.");
-  }
-
-  if (pagesToText === "") {
-    errors.push("Uzupełnij stronę końcową.");
-  }
-
-  if (isNaN(pagesFrom) || isNaN(pagesTo)) {
-    errors.push("Zakres stron musi zawierać tylko liczby.");
-  }
-
-  if (pagesFrom <= 0 || pagesTo <= 0) {
-    errors.push("Numery stron muszą być większe od 0.");
-  }
-
-  if (pagesFrom > pagesTo) {
-    errors.push("Strona początkowa nie może być większa niż końcowa.");
-  }
-
-  if (articleData.kategoria === "") {
-    errors.push("Wybierz kategorię.");
-  }
-
-  if (!isEditMode && !articleData.pdfFile) {
-    errors.push("Dodaj plik PDF.");
-  }
-
-  if (isEditMode && !articleData.pdfFile && !articleData.existingPdfPath) {
-    errors.push("Dodaj plik PDF.");
-  }
-
-  return errors;
-}
-
-async function handleSubmit(e) {
-  e.preventDefault();
-
-  const errors = validateForm();
-
-  if (errors.length > 0) {
-    alert(errors.join("\n"));
-    return;
-  }
-
-  try {
-    const formData = new FormData();
-
-    // Jeśli jesteśmy w trybie edycji, dorzucamy id do body (tak jak sama dodałaś)
-    if (isEditMode) {
-      formData.append("id", id);
+    if (title === "") {
+      errors.push("Uzupełnij tytuł artykułu.");
     }
 
-    formData.append("title", articleData.tytul);
-    
-    // WRACAMY DO TWOJEGO SPRAWDZONEGO FORMATU JSON:
-    formData.append("authors", JSON.stringify(articleData.autorzy));
-    formData.append("tags", JSON.stringify(articleData.slowaKluczowe));
-    formData.append("pages_from", articleData.zakresStronOd);
-    formData.append("pages_to", articleData.zakresStronDo);
-    formData.append("category", articleData.kategoria);
-
-    if (articleData.pdfFile) {
-      formData.append("pdf", articleData.pdfFile);
+    if (title.length < 3) {
+      errors.push("Tytuł musi mieć co najmniej 3 znaki.");
     }
 
-    if (articleData.extraFile) {
-      formData.append("extraFile", articleData.extraFile);
+    if (articleData.autorzy.length === 0) {
+      errors.push("Dodaj przynajmniej jednego autora.");
     }
 
-    // Wszystko wysyłamy na Twój jeden, główny endpoint, zmieniając tylko metodę HTTP
-    const response = await fetch("http://localhost:5000/api/article", {
-      method: isEditMode ? "PUT" : "POST",
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.details || data.error || "Błąd serwera");
+    if (articleData.slowaKluczowe.length === 0) {
+      errors.push("Dodaj przynajmniej jedno słowo kluczowe.");
     }
 
-    console.log("Zapisano pomyślnie:", data);
-    navigate("/admin");
-  } catch (error) {
-    console.error(error);
-    alert(
-      isEditMode
-        ? `Błąd podczas edycji artykułu: ${error.message}`
-        : `Błąd podczas dodawania artykułu: ${error.message}`
-    );
+    if (pagesFromText === "") {
+      errors.push("Uzupełnij stronę początkową.");
+    }
+
+    if (pagesToText === "") {
+      errors.push("Uzupełnij stronę końcową.");
+    }
+
+    if (isNaN(pagesFrom) || isNaN(pagesTo)) {
+      errors.push("Zakres stron musi zawierać tylko liczby.");
+    }
+
+    if (pagesFrom <= 0 || pagesTo <= 0) {
+      errors.push("Numery stron muszą być większe od 0.");
+    }
+
+    if (pagesFrom > pagesTo) {
+      errors.push("Strona początkowa nie może być większa niż końcowa.");
+    }
+
+    if (articleData.kategoria === "") {
+      errors.push("Wybierz kategorię.");
+    }
+
+    if (!isEditMode && !articleData.pdfFile) {
+      errors.push("Dodaj plik PDF.");
+    }
+
+    if (isEditMode && !articleData.pdfFile && !articleData.existingPdfPath) {
+      errors.push("Dodaj plik PDF.");
+    }
+
+    return errors;
   }
-}
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const errors = validateForm();
+
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+
+      // Jeśli jesteśmy w trybie edycji, dorzucamy id do body (tak jak sama dodałaś)
+      if (isEditMode) {
+        formData.append("id", id);
+      }
+
+      formData.append("title", articleData.tytul);
+
+      // WRACAMY DO TWOJEGO SPRAWDZONEGO FORMATU JSON:
+      formData.append("authors", JSON.stringify(articleData.autorzy));
+      formData.append("tags", JSON.stringify(articleData.slowaKluczowe));
+      formData.append("pages_from", articleData.zakresStronOd);
+      formData.append("pages_to", articleData.zakresStronDo);
+      formData.append("category", articleData.kategoria);
+
+      if (isEditMode) {
+        // formData.append("id", id);
+
+        formData.append(
+          "clearExtra",
+          articleData.existingExtraFilePath ? "false" : "true",
+        );
+      }
+
+      if (articleData.pdfFile) {
+        formData.append("pdf", articleData.pdfFile);
+      }
+
+      if (articleData.extraFile) {
+        formData.append("extraFile", articleData.extraFile);
+      }
+
+      // Wszystko wysyłamy na Twój jeden, główny endpoint, zmieniając tylko metodę HTTP
+      const response = await fetch("http://localhost:5000/api/article", {
+        method: isEditMode ? "PUT" : "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.details || data.error || "Błąd serwera");
+      }
+
+      console.log("Zapisano pomyślnie:", data);
+      navigate("/admin");
+    } catch (error) {
+      console.error(error);
+      alert(
+        isEditMode
+          ? `Błąd podczas edycji artykułu: ${error.message}`
+          : `Błąd podczas dodawania artykułu: ${error.message}`,
+      );
+    }
+  }
 
   if (loading) {
     return <p>Ładowanie artykułu...</p>;
   }
 
   return (
-  <div className="article-editor">
-    {/* HERO */}
-    <section className="editor-hero">
-      <p className="hero-eyebrow">
-        {isEditMode ? "Edycja artykułu" : "Nowy artykuł"}
-      </p>
+    <div className="article-editor">
+      {/* HERO */}
+      <section className="editor-hero">
+        <p className="hero-eyebrow">
+          {isEditMode ? "Edycja artykułu" : "Nowy artykuł"}
+        </p>
 
-      <h1 className="hero-title">
-        {isEditMode ? "Edytuj artykuł" : "Dodaj nowy artykuł"}
-      </h1>
+        <h1 className="hero-title">
+          {isEditMode ? "Edytuj artykuł" : "Dodaj nowy artykuł"}
+        </h1>
 
-      <p className="editor-desc">
-        Uzupełnij wszystkie informacje dotyczące publikacji, dodaj pliki oraz
-        przypisz odpowiednią kategorię.
-      </p>
+        <p className="editor-desc">
+          Uzupełnij wszystkie informacje dotyczące publikacji, dodaj pliki oraz
+          przypisz odpowiednią kategorię.
+        </p>
 
-      <div className="editor-books">
-        <div className="b1"></div>
-        <div className="b2"></div>
-        <div className="b3"></div>
-        <div className="b4"></div>
-        <div className="b5"></div>
-      </div>
-    </section>
-
-    <div className="editor-wrapper">
-      <button
-        type="button"
-        className="back-button"
-        onClick={() => navigate("/admin")}
-      >
-        Powrót do panelu
-      </button>
-
-      <form className="form-horizontal" onSubmit={handleSubmit}>
-        {/* TYTUŁ */}
-        <div className="form-group1">
-          <label htmlFor="tytul" className="control-label">
-            Tytuł
-          </label>
-
-          <input style={{ textTransform: "none" }}
-            type="text"
-            className="form-group"
-            id="tytul"
-            value={articleData.tytul}
-            onChange={(e) =>
-              setArticleData({
-                ...articleData,
-                tytul: e.target.value,
-              })
-            }
-          />
+        <div className="editor-books">
+          <div className="b1"></div>
+          <div className="b2"></div>
+          <div className="b3"></div>
+          <div className="b4"></div>
+          <div className="b5"></div>
         </div>
+      </section>
 
-        {/* AUTORZY */}
-        <div className="form-group1">
-          <label className="control-label">Autorzy</label>
+      <div className="editor-wrapper">
+        <button
+          type="button"
+          className="back-button"
+          onClick={() => navigate("/admin")}
+        >
+          Powrót do panelu
+        </button>
 
-          <Autorzy 
-            autorzy={articleData.autorzy}
-            setAutorzy={(autorzy) =>
-              setArticleData({
-                ...articleData,
-                autorzy,
-              })
-            }
-          />
-        </div>
-
-        {/* SŁOWA KLUCZOWE */}
-        <div className="form-group1">
-          <label className="control-label">Słowa kluczowe</label>
-
-          <SlowaKluczowe
-            slowaKluczowe={articleData.slowaKluczowe}
-            setSlowaKluczowe={(slowaKluczowe) =>
-              setArticleData({
-                ...articleData,
-                slowaKluczowe,
-              })
-            }
-          />
-        </div>
-
-        {/* ZAKRES STRON */}
-        <div className="form-group1">
-          <label className="control-label">Zakres stron</label>
-
-          <div className="pages-row">
-            <input
-              type="number"
-              className="form-group"
-              placeholder="Od"
-              value={articleData.zakresStronOd}
-              onChange={(e) =>
-                setArticleData({
-                  ...articleData,
-                  zakresStronOd: e.target.value,
-                })
-              }
-            />
-
-            <div className="pages-divider">—</div>
+        <form className="form-horizontal" onSubmit={handleSubmit}>
+          {/* TYTUŁ */}
+          <div className="form-group1">
+            <label htmlFor="tytul" className="control-label">
+              Tytuł
+            </label>
 
             <input
+              style={{ textTransform: "none" }}
               type="text"
               className="form-group"
-              placeholder="Do"
-              value={articleData.zakresStronDo}
+              id="tytul"
+              value={articleData.tytul}
               onChange={(e) =>
                 setArticleData({
                   ...articleData,
-                  zakresStronDo: e.target.value,
+                  tytul: e.target.value,
                 })
               }
             />
           </div>
-        </div>
 
-        {/* KATEGORIA */}
-        <div className="form-group1">
-          <label className="control-label">Kategoria</label>
+          {/* AUTORZY */}
+          <div className="form-group1">
+            <label className="control-label">Autorzy</label>
 
-          <select
-            className="category-select"
-            value={articleData.kategoria}
-            onChange={(e) =>
-              setArticleData({
-                ...articleData,
-                kategoria: e.target.value,
-              })
-            }
-          >
-            <div className="dropdown">
-            <option className="control-label" value="" disabled hidden>
-              Wybierz kategorię
-            </option>
+            <Autorzy
+              autorzy={articleData.autorzy}
+              setAutorzy={(autorzy) =>
+                setArticleData({
+                  ...articleData,
+                  autorzy,
+                })
+              }
+            />
+          </div>
 
-            <option style={{ textTransform: "none" }} value="Matematyka">Matematyka</option>
-            <option style={{ textTransform: "none" }} value="Informatyka">Informatyka</option>
-            <option style={{ textTransform: "none" }} value="Dydaktyka">Dydaktyka</option>
-            <option style={{ textTransform: "none" }} value="Popularyzacja nauki">
-              Popularyzacja nauki
-            </option>
+          {/* SŁOWA KLUCZOWE */}
+          <div className="form-group1">
+            <label className="control-label">Słowa kluczowe</label>
+
+            <SlowaKluczowe
+              slowaKluczowe={articleData.slowaKluczowe}
+              setSlowaKluczowe={(slowaKluczowe) =>
+                setArticleData({
+                  ...articleData,
+                  slowaKluczowe,
+                })
+              }
+            />
+          </div>
+
+          {/* ZAKRES STRON */}
+          <div className="form-group1">
+            <label className="control-label">Zakres stron</label>
+
+            <div className="pages-row">
+              <input
+                type="number"
+                className="form-group"
+                placeholder="Od"
+                value={articleData.zakresStronOd}
+                onChange={(e) =>
+                  setArticleData({
+                    ...articleData,
+                    zakresStronOd: e.target.value,
+                  })
+                }
+              />
+
+              <div className="pages-divider">—</div>
+
+              <input
+                type="text"
+                className="form-group"
+                placeholder="Do"
+                value={articleData.zakresStronDo}
+                onChange={(e) =>
+                  setArticleData({
+                    ...articleData,
+                    zakresStronDo: e.target.value,
+                  })
+                }
+              />
             </div>
-          </select>
-        </div>
-
-        {/* PDF */}
-        <div className="form-group">
-          <label className="control-label">Plik PDF</label>
-
-          <div className="upload-wrapper">
-            <DragAndDropPDF
-              pdfFile={articleData.pdfFile}
-              existingFilePath={articleData.existingPdfPath}
-              onChange={(file) =>
-                setArticleData({
-                  ...articleData,
-                  pdfFile: file,
-                })
-              }
-              onRemoveExisting={() =>
-                setArticleData({
-                  ...articleData,
-                  existingPdfPath: null,
-                })
-              }
-            />
           </div>
-        </div>
 
-        {/* DODATKOWY PLIK */}
-        <div className="form-group">
-          <label className="control-label">
-            Dodatkowy plik
-          </label>
+          {/* KATEGORIA */}
+          <div className="form-group1">
+            <label className="control-label">Kategoria</label>
 
-          <div className="upload-wrapper">
-            <DragAndDropExtraFile
-              ExtraFile={articleData.extraFile}
-              existingFilePath={articleData.existingExtraFilePath}
-              onChange={(file) =>
+            <select
+              className="category-select"
+              value={articleData.kategoria}
+              onChange={(e) =>
                 setArticleData({
                   ...articleData,
-                  extraFile: file,
+                  kategoria: e.target.value,
                 })
               }
-              onRemoveExisting={() =>
-                setArticleData({
-                  ...articleData,
-                  existingExtraFilePath: null,
-                })
-              }
-            />
+            >
+              <div className="dropdown">
+                <option className="control-label" value="" disabled hidden>
+                  Wybierz kategorię
+                </option>
+
+                <option style={{ textTransform: "none" }} value="Matematyka">
+                  Matematyka
+                </option>
+                <option style={{ textTransform: "none" }} value="Informatyka">
+                  Informatyka
+                </option>
+                <option style={{ textTransform: "none" }} value="Dydaktyka">
+                  Dydaktyka
+                </option>
+                <option
+                  style={{ textTransform: "none" }}
+                  value="Popularyzacja nauki"
+                >
+                  Popularyzacja nauki
+                </option>
+              </div>
+            </select>
           </div>
-        </div>
 
-        <button type="submit" className="save-button">
-          {isEditMode ? "Zapisz zmiany" : "Dodaj artykuł"}
-        </button>
-      </form>
+          {/* PDF */}
+          <div className="form-group">
+            <label className="control-label">Plik PDF</label>
+
+            <div className="upload-wrapper">
+              <DragAndDropPDF
+                pdfFile={articleData.pdfFile}
+                existingFilePath={articleData.existingPdfPath}
+                onChange={(file) =>
+                  setArticleData({
+                    ...articleData,
+                    pdfFile: file,
+                  })
+                }
+                onRemoveExisting={() =>
+                  setArticleData({
+                    ...articleData,
+                    existingPdfPath: null,
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          {/* DODATKOWY PLIK */}
+          <div className="form-group">
+            <label className="control-label">Dodatkowy plik</label>
+
+            <div className="upload-wrapper">
+              <DragAndDropExtraFile
+                ExtraFile={articleData.extraFile}
+                existingFilePath={articleData.existingExtraFilePath}
+                onChange={(file) =>
+                  setArticleData({
+                    ...articleData,
+                    extraFile: file,
+                  })
+                }
+                onRemoveExisting={() =>
+                  setArticleData({
+                    ...articleData,
+                    existingExtraFilePath: null,
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="save-button">
+            {isEditMode ? "Zapisz zmiany" : "Dodaj artykuł"}
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default DodawanieEdytowanieArtykulu;
