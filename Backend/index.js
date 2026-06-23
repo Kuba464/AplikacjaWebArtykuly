@@ -179,6 +179,35 @@ ORDER BY publication_date DESC;
   }
 });
 
+app.post("/api/stats/:id", async (req, res) => {
+  try {
+    await pool.query("INSERT INTO stats (id_article) VALUES ($1)", [req.params.id]);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+});
+
+app.get("/api/stats", requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        articles.id,
+        articles.title,
+        COUNT(stats.id) AS views
+      FROM articles
+      LEFT JOIN stats ON stats.id_article = articles.id
+      GROUP BY articles.id, articles.title
+      ORDER BY views DESC, articles.title ASC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+});
+
 app.get("/api/roczniki", async (req, res) => {
   try {
     const result = await pool.query(`

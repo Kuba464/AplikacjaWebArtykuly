@@ -28,7 +28,7 @@ function DodawanieEdytowanieArtykulu() {
   });
 
   useEffect(() => {
-    if (localStorage.getItem("zalogowany") !== "true") {
+    if (!localStorage.getItem("token")) {
       navigate("/admin/logowanie");
     }
   }, [navigate]);
