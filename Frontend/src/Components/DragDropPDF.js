@@ -5,6 +5,8 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
   // Funkcja pomocnicza wyciągająca nazwę pliku ze ścieżki (np. z "DB/PdfFiles/MAT-26-001.pdf" wytnie "MAT-26-001.pdf")
   const getFileNameFromPath = (path) => {
     if (!path) return "";
@@ -12,28 +14,39 @@ function DragAndDropPDF({ pdfFile, existingFilePath, onChange, onRemoveExisting 
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const file = e.target.files[0];
 
-    if (file && file.type === "application/pdf") {
-      onChange(file);
-    } else if (file) {
-      alert("Możesz dodać tylko plik PDF!");
-    }
-  };
+  if (validateFile(file)) {
+    onChange(file);
+  }
+};
 
   const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
+  e.preventDefault();
+  setIsDragging(false);
 
-    const file = e.dataTransfer.files[0];
+  const file = e.dataTransfer.files[0];
 
-    if (file && file.type === "application/pdf") {
-      onChange(file);
-    } else if (file) {
-      alert("Możesz dodać tylko plik PDF!");
-    }
-  };
+  if (validateFile(file)) {
+    onChange(file);
+  }
+};
 
+const validateFile = (file) => {
+  if (!file) return false;
+
+  if (file.type !== "application/pdf") {
+    alert("Możesz dodać tylko plik PDF!");
+    return false;
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    alert("Plik PDF może mieć maksymalnie 10 MB.");
+    return false;
+  }
+
+  return true;
+};
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);

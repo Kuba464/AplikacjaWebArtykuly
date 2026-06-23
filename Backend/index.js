@@ -27,7 +27,9 @@ app.post("/api/login", async (req, res) => {
     return res.status(401).json({ error: "Nieprawidłowe dane logowania" });
   }
 
-  const token = jwt.sign({ login }, process.env.JWT_SECRET, { expiresIn: "8h" });
+  const token = jwt.sign({ login }, process.env.JWT_SECRET, {
+    expiresIn: "8h",
+  });
   res.json({ token });
 });
 
@@ -49,14 +51,11 @@ app.get("/api/test", (req, res) => {
     message: "Backend działa",
   });
 });
-app.use(
-  "/DB/PdfFiles",
-  express.static(path.join(__dirname, "/DB/PdfFiles"))
-);
+app.use("/DB/PdfFiles", express.static(path.join(__dirname, "/DB/PdfFiles")));
 
 app.use(
   "/DB/ExtraFiles",
-  express.static(path.join(__dirname, "DB/ExtraFiles"))
+  express.static(path.join(__dirname, "DB/ExtraFiles")),
 );
 console.log("__dirname =", __dirname);
 console.log("static path =", path.join(__dirname, "DB/PdfFiles"));
@@ -106,6 +105,49 @@ app.get("/api/articles", async (req, res) => {
       LEFT JOIN categories ON id_category = categories.id
       ORDER BY publication_date DESC;
     `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+});
+
+app.get("/api/articles_by_categories/:category", async (req, res) => {
+  try {
+    const category = req.params.category;
+
+    const result = await pool.query(
+      `
+      SELECT
+        articles.id,
+        title,
+        pages_from,
+        pages_to,
+        publication_date,
+        pdf_path,
+        extra_file_path,
+        categories.category,
+        symbol,
+        (
+          SELECT string_agg(a.name || ' ' || a.surname, ', ' ORDER BY a.id)
+          FROM author_articles aa
+          JOIN authors a ON aa.id_author = a.id
+          WHERE aa.id_article = articles.id
+        ) AS authors,
+        (
+          SELECT string_agg(t.name, ', ' ORDER BY t.name)
+          FROM article_tags at
+          JOIN tags t ON at.id_tag = t.id
+          WHERE at.id_article = articles.id
+        ) AS tags
+      FROM articles
+      LEFT JOIN categories ON articles.id_category = categories.id
+      WHERE categories.category ILIKE $1
+      ORDER BY publication_date DESC;
+      `,
+      [category],
+    );
 
     res.json(result.rows);
   } catch (err) {
@@ -181,7 +223,9 @@ ORDER BY publication_date DESC;
 
 app.post("/api/stats/:id", async (req, res) => {
   try {
-    await pool.query("INSERT INTO stats (id_article) VALUES ($1)", [req.params.id]);
+    await pool.query("INSERT INTO stats (id_article) VALUES ($1)", [
+      req.params.id,
+    ]);
     res.json({ ok: true });
   } catch (err) {
     console.error(err);
@@ -223,8 +267,6 @@ app.get("/api/roczniki", async (req, res) => {
     res.status(500).json({ error: "Błąd serwera" });
   }
 });
-
-
 
 // ADMIN
 async function getOrCreateTag(tagName) {
@@ -283,7 +325,15 @@ app.post(
       console.log(req.body);
       console.log(req.files);
 
-      const { title, authors, tags, pages_from, pages_to, category } = req.body;
+      const {
+        title,
+        authors,
+        tags,
+        pages_from,
+        pages_to,
+        category,
+        publication_date,
+      } = req.body;
 
       const categoryResult = await pool.query(
         `SELECT id, symbol FROM categories WHERE category = $1`,
@@ -334,10 +384,18 @@ app.post(
 
       const result = await pool.query(
         `INSERT INTO articles
-        (title, pages_from, pages_to, id_category, pdf_path, extra_file_path)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        (title, pages_from, pages_to, id_category, pdf_path, extra_file_path, publication_date)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id`,
-        [title, pages_from, pages_to, categoryId, finalPdfPath, extraFilePath],
+        [
+          title,
+          pages_from,
+          pages_to,
+          categoryId,
+          finalPdfPath,
+          extraFilePath,
+          publication_date,
+        ],
       );
 
       const articleId = result.rows[0].id;
@@ -423,25 +481,28 @@ app.put(
 
     try {
       if (!articleId) {
-        return res.status(400).json({ error: "Brak identyfikatora artykułu (id) w żądaniu" });
+        return res
+          .status(400)
+          .json({ error: "Brak identyfikatora artykułu (id) w żądaniu" });
       }
 
       // 1. Wyciągamy dane tekstowe przesłane przez FormData
       const {
-        title,
-        authors,
-        tags,
-        pages_from,
-        pages_to,
-        category,
-        clearPdf,
-        clearExtra,
-      } = req.body;
+      title,
+      authors,
+      tags,
+      pages_from,
+      pages_to,
+      category,
+      publication_date,
+      clearPdf,
+      clearExtra,
+    } = req.body;
 
       // 2. Pobieramy ID kategorii na podstawie jej nazwy tekstowej
       const categoryResult = await pool.query(
         `SELECT id FROM categories WHERE category = $1`,
-        [category]
+        [category],
       );
 
       if (categoryResult.rows.length === 0) {
@@ -452,7 +513,7 @@ app.put(
       // 3. Pobieramy dotychczasowe ścieżki plików z bazy danych
       const currentArticle = await pool.query(
         "SELECT pdf_path, extra_file_path FROM articles WHERE id = $1",
-        [articleId]
+        [articleId],
       );
 
       if (currentArticle.rows.length === 0) {
@@ -470,7 +531,7 @@ app.put(
         finalPdfPath = null;
       }
       if (req.files && req.files.pdf) {
-        finalPdfPath = req.files.pdf[0].path; 
+        finalPdfPath = req.files.pdf[0].path;
       }
 
       // 5. Obsługa usuwania / podmieniania pliku dodatkowego
@@ -487,57 +548,73 @@ app.put(
       // 6. Aktualizacja głównych danych artykułu
       const updateQuery = `
         UPDATE articles
-        SET title = $1, pages_from = $2, pages_to = $3, id_category = $4, pdf_path = $5, extra_file_path = $6
-        WHERE id = $7
+      SET title = $1,
+      pages_from = $2,
+      pages_to = $3,
+      id_category = $4,
+      pdf_path = $5,
+      extra_file_path = $6,
+      publication_date = $7
+      WHERE id = $8
       `;
       await pool.query(updateQuery, [
+        
         title,
         pages_from,
         pages_to,
         categoryId,
         finalPdfPath,
         finalExtraPath,
+        publication_date,
         articleId,
+        
       ]);
 
       // 7. Aktualizacja Autorów (parsowanie tablicy JSON + brak duplikatów)
-      await pool.query("DELETE FROM author_articles WHERE id_article = $1", [articleId]);
-      
+      await pool.query("DELETE FROM author_articles WHERE id_article = $1", [
+        articleId,
+      ]);
+
       const rawAuthors = authors ? JSON.parse(authors) : [];
-      const uniqueAuthors = [...new Set(rawAuthors.map(a => a.trim()).filter(a => a !== ""))];
+      const uniqueAuthors = [
+        ...new Set(rawAuthors.map((a) => a.trim()).filter((a) => a !== "")),
+      ];
 
       for (const authorText of uniqueAuthors) {
         const authorId = await getOrCreateAuthor(authorText);
         await pool.query(
           "INSERT INTO author_articles (id_author, id_article) VALUES ($1, $2)",
-          [authorId, articleId]
+          [authorId, articleId],
         );
       }
 
       // 8. Aktualizacja Tagów (parsowanie tablicy JSON + brak duplikatów)
-      await pool.query("DELETE FROM article_tags WHERE id_article = $1", [articleId]);
-      
+      await pool.query("DELETE FROM article_tags WHERE id_article = $1", [
+        articleId,
+      ]);
+
       const rawTags = tags ? JSON.parse(tags) : [];
-      const uniqueTags = [...new Set(rawTags.map(t => t.trim()).filter(t => t !== ""))];
+      const uniqueTags = [
+        ...new Set(rawTags.map((t) => t.trim()).filter((t) => t !== "")),
+      ];
 
       for (const tagText of uniqueTags) {
         const tagId = await getOrCreateTag(tagText);
         await pool.query(
           "INSERT INTO article_tags (id_tag, id_article) VALUES ($1, $2)",
-          [tagId, articleId]
+          [tagId, articleId],
         );
       }
 
       res.json({ message: "Artykuł został zaktualizowany pomyślnie" });
-
     } catch (err) {
       console.error("BŁĄD PODCZAS EDYCJI:", err);
-      res.status(500).json({ 
-        error: "Nie można zaktualizować artykułu", 
-        details: err.message 
+      res.status(500).json({
+        error: "Nie można zaktualizować artykułu",
+        details: err.message,
       });
     }
-  }
+  },
 );
 
 const PORT = process.env.PORT || 5000;
