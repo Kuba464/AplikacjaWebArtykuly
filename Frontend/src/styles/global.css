@@ -316,23 +316,173 @@ nav a:hover, nav a:focus { border-bottom-color: var(--line); }
 .onas-stat-opis { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
 /* FOOTER */
-footer { padding: 60px 0; }
-.footer-kontakt {
-  padding: 10px;
-  display: flex; flex-direction: column; justify-content: flex-start;
-  height: 200px; background-color: var(--bg);
-  margin-bottom: 60px; font-family: var(--serif);
+
+footer {
+  margin-top: 50px;
+  padding: 20px 30px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
 }
-.footer-kontakt p { margin: 4px 0; font-weight: 300; color: var(--muted); }
-.kontakt { color: var(--ink); font-size: 32px; font-weight: 600; }
-.info { color: var(--ink); font-weight: 600; }
+
 .footer-copy {
-  border-top: 1px solid var(--border); padding: 14px 0;
-  display: flex; justify-content: space-between;
-  font-size: 12px; color: var(--muted); font-weight: 300;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 300;
 }
-.footer-copy a { color: var(--muted); transition: color .18s; }
-.footer-copy a:hover { color: var(--ink); }
+
+.footer-copy span:first-child {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.footer-copy span:last-child {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.footer-copy a {
+  color: var(--muted);
+  font-weight: 300;
+  transition: color 0.18s;
+}
+
+.footer-copy a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 700px) {
+  footer {
+    padding: 18px 20px;
+  }
+
+  .footer-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+}
+
+/* RESPONSYWNOŚĆ */
+
+@media (max-width: 700px) {
+  footer {
+    padding: 28px 20px;
+  }
+
+  .footer-copy {
+    flex-direction: column;
+    text-align: center;
+    padding: 22px 18px;
+  }
+}
+
+/* ROCZNIKI */
+
+.rocznik-section {
+  padding: 50px 60px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+
+.rocznik-section:nth-child(even) {
+  background: var(--bg);
+}
+
+.rocznik-section .blog-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.rocznik-title {
+  grid-column: 1 / -1;
+  font-family: var(--serif);
+  font-size: 38px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: center;
+  margin: 0 0 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.rocznik-title::before,
+.rocznik-title::after {
+  content: "";
+  display: inline-block;
+  width: 34px;
+  height: 1.5px;
+  background: var(--accent);
+  vertical-align: middle;
+  margin: 0 14px;
+}
+
+.rocznik-section .article {
+  background: var(--white);
+  min-height: 220px;
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+
+.rocznik-section .article:hover {
+  background: var(--bg);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.06);
+}
+
+/* gdy w danym roczniku nie ma artykułów */
+.brak-artykulow {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 300;
+  padding: 36px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* RESPONSYWNOŚĆ */
+@media (max-width: 900px) {
+  .rocznik-section {
+    padding: 40px 28px;
+  }
+
+  .rocznik-section .blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rocznik-title {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 520px) {
+  .rocznik-section {
+    padding: 32px 18px;
+  }
+
+  .rocznik-title {
+    font-size: 28px;
+  }
+
+  .rocznik-title::before,
+  .rocznik-title::after {
+    width: 20px;
+    margin: 0 8px;
+  }
+}
 
 @media (max-width: 900px) {
   .cat-grid { grid-template-columns: repeat(2, 1fr); }
@@ -342,6 +492,25 @@ footer { padding: 60px 0; }
   nav { gap: 20px; }
 }
 
+@media (max-width: 900px) {
+  .onas-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .onas-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .onas-stat {
+    padding: 26px 18px;
+  }
+
+  .onas-stat-liczba {
+    font-size: 34px;
+  }
+}
 
 .tagsandextrefile {
   display: flex;

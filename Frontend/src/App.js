@@ -16,6 +16,7 @@ import Roczniki from "./Strony/Roczniki";
 import DodawanieEdytowanieArtykulu from "./Strony/DodawanieEdytowanieArtykulu";
 import Kontakt from "./Strony/Kontakt";
 import Szukaj from "./Strony/Szukaj";
+import Footer from "./Components/Footer.js";
 import Statystyki from "./Strony/Statystyki";
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
         <Route path="/szukaj" element={<Szukaj />} />
         <Route path="/admin/statystyki" element={<Statystyki />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
