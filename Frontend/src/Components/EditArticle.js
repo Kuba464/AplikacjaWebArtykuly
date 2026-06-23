@@ -3,8 +3,8 @@ import React from "react";
 function EditArticle({ article, onEdit }) {
     return (
         <div className="edit-article">
-            <button onClick={() => onEdit(article.id)}>
-                Edit
+            <button className="btn-edit" onClick={() => onEdit(article.id)}>
+                Edytuj
             </button>
         </div>
     );

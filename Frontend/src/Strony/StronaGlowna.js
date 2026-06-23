@@ -34,16 +34,16 @@ function StronaGlowna() {
   }
   return (
     <>
-      <Siteheader />
-      <Hero />
-      <div className="blog">
-        <div className="blog-grid">
+      <Siteheader /> //górny pasek z nazwą strony i tagline
+      <Hero />       //baner z tytułem i przyciskiem
+      <Categories /> //lista kategorii artykułów
+      <div className="blog"> // główny kontener z artykułami
+        <div className="blog-grid"> 
           {articles.map((article) => (
             <Article key={article.id} article={article} />
           ))}
         </div>
       </div>
-      <Categories />
     </>
   );
 }

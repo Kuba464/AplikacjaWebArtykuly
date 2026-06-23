@@ -3,6 +3,8 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 
@@ -12,6 +14,35 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.post("/api/login", async (req, res) => {
+  const { login, haslo } = req.body;
+
+  if (login !== process.env.ADMIN_LOGIN) {
+    return res.status(401).json({ error: "Nieprawidłowe dane logowania" });
+  }
+
+  const valid = await bcrypt.compare(haslo, process.env.ADMIN_PASSWORD_HASH);
+  if (!valid) {
+    return res.status(401).json({ error: "Nieprawidłowe dane logowania" });
+  }
+
+  const token = jwt.sign({ login }, process.env.JWT_SECRET, { expiresIn: "8h" });
+  res.json({ token });
+});
+
+function requireAuth(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Brak autoryzacji" });
+  }
+  try {
+    jwt.verify(auth.slice(7), process.env.JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: "Nieprawidłowy token" });
+  }
+}
 
 app.get("/api/test", (req, res) => {
   res.json({
@@ -212,7 +243,7 @@ async function getOrCreateAuthor(fullName) {
 
 app.post(
   "/api/article",
-
+  requireAuth,
   upload.fields([
     { name: "pdf", maxCount: 1 },
     { name: "extraFile", maxCount: 1 },
@@ -336,7 +367,7 @@ app.post(
   },
 );
 
-app.delete("/api/articles/:id", async (req, res) => {
+app.delete("/api/articles/:id", requireAuth, async (req, res) => {
   const articleId = req.params.id;
   const query = `DELETE FROM articles WHERE id = $1`;
 
@@ -352,6 +383,7 @@ app.delete("/api/articles/:id", async (req, res) => {
 // ZMIANA: Zamiast "/api/articles/:id" dajemy ten sam adres co w POST
 app.put(
   "/api/article",
+  requireAuth,
   upload.fields([
     { name: "pdf", maxCount: 1 },
     { name: "extraFile", maxCount: 1 },

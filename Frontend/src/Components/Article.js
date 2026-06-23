@@ -78,7 +78,7 @@ function Article({ article }) {
           <span>{article.publication_date?.split("T")[0]}</span>
 
         <div className="authors">
-          {article.authors.split(", ").map((author, index) => (
+          {article.authors?.split(", ").map((author, index) => (
             <span className="art-author" key={index}>
               {author}
               <br />

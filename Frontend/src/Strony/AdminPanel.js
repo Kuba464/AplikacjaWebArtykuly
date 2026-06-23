@@ -14,7 +14,7 @@ function AdminPanel() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem("zalogowany") !== "true") {
+    if (!localStorage.getItem("token")) {
       navigate("/admin/logowanie");
     }
   }, [navigate]);
@@ -46,7 +46,7 @@ function AdminPanel() {
           <button
               className="back-button2"
               onClick={() => {
-                localStorage.removeItem("zalogowany");
+                localStorage.removeItem("token");
                 navigate("/strona-glowna");
               }}
             >
@@ -89,7 +89,7 @@ function AdminPanel() {
           <div className="admin-actions">
             
             <button
-              className="back-button3"
+              className="back-button2"
               onClick={() => navigate("/admin/dodaj-edytuj-artykul")}
             >
               Dodaj nowy artykuł

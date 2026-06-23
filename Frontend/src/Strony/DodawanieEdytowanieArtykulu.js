@@ -112,6 +112,7 @@ async function handleSubmit(e) {
     // Wszystko wysyłamy na Twój jeden, główny endpoint, zmieniając tylko metodę HTTP
     const response = await fetch("http://localhost:5000/api/article", {
       method: isEditMode ? "PUT" : "POST",
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       body: formData,
     });
 
