@@ -23,6 +23,7 @@ function DodawanieEdytowanieArtykulu() {
     zakresStronOd: "",
     zakresStronDo: "",
     kategoria: "",
+    publicationDate: "",
     pdfFile: null,
     extraFile: null,
   });
@@ -65,6 +66,9 @@ function DodawanieEdytowanieArtykulu() {
           zakresStronOd: article.pages_from || "",
           zakresStronDo: article.pages_to || "",
           kategoria: article.category || "",
+          publicationDate: article.publication_date
+            ? article.publication_date.slice(0, 10)
+            : "",
           // Przechowujemy ścieżki z bazy danych, aby wiedzieć, że pliki już tam są
           existingPdfPath: article.pdf_path || null,
           existingExtraFilePath: article.extra_file_path || null,
@@ -131,6 +135,10 @@ function DodawanieEdytowanieArtykulu() {
       errors.push("Wybierz kategorię.");
     }
 
+    if (articleData.publicationDate.trim() === "") {
+      errors.push("Wybierz datę publikacji.");
+    }
+
     if (!isEditMode && !articleData.pdfFile) {
       errors.push("Dodaj plik PDF.");
     }
@@ -168,6 +176,7 @@ function DodawanieEdytowanieArtykulu() {
       formData.append("pages_from", articleData.zakresStronOd);
       formData.append("pages_to", articleData.zakresStronDo);
       formData.append("category", articleData.kategoria);
+      formData.append("publication_date", articleData.publicationDate);
 
       if (isEditMode) {
         // formData.append("id", id);
@@ -375,6 +384,22 @@ function DodawanieEdytowanieArtykulu() {
             </select>
           </div>
 
+          {/* PUBLICATION DATE */}
+          <div className="form-group1">
+            <label className="control-label">Data publikacji</label>
+
+            <input
+              type="date"
+              className="form-group"
+              value={articleData.publicationDate}
+              onChange={(e) =>
+                setArticleData({
+                  ...articleData,
+                  publicationDate: e.target.value,
+                })
+              }
+            />
+          </div>
           {/* PDF */}
           <div className="form-group">
             <label className="control-label">Plik PDF</label>
