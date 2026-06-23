@@ -8,16 +8,25 @@ function Login() {
 
   const navigate = useNavigate();
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
 
-    // przykładowe dane
-    if (login === "admin" && haslo === "1234") {
-      localStorage.setItem("zalogowany", "true");
-      navigate("/admin");
+    try {
+      const res = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ login, haslo }),
+      });
 
-    } else {
-      alert("Nieprawidłowe dane");
+      if (res.ok) {
+        const { token } = await res.json();
+        localStorage.setItem("token", token);
+        navigate("/admin");
+      } else {
+        alert("Nieprawidłowe dane logowania");
+      }
+    } catch {
+      alert("Błąd połączenia z serwerem");
     }
   }
 

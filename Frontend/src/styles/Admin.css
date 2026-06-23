@@ -80,18 +80,25 @@
   border: 1px solid var(--border);
   background: var(--white);
   transition: all .2s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
 
 .admin-article-card:hover {
   background: var(--bg);
 }
 
 .admin-card-actions {
+  margin-top: auto;
   display: flex;
   gap: 12px;
   padding: 20px 24px;
   border-top: 1px solid var(--border);
 }
+
 
 /* BUTTONS INSIDE CARDS */
 .admin-card-actions button {
@@ -113,6 +120,92 @@
 }
 
 .admin-card-actions button:hover {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+
+.btn-delete {
+  border-radius: 16px !important;
+  background: #b83222 !important;
+  border-color: #b83222 !important;
+  color: var(--white) !important;
+}
+
+.btn-delete:hover {
+  background: #8f2419 !important;
+  border-color: #8f2419 !important;
+  color: var(--white) !important;
+}
+
+.btn-edit {
+  border-radius: 16px !important;
+  background: #888078 !important;
+  border-color: #888078 !important;
+  color: var(--white) !important;
+}
+
+.btn-edit:hover {
+  background: #5e574f !important;
+  border-color: #5e574f !important;
+  color: var(--white) !important;
+}
+
+/* CONFIRM MODAL */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-modal {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 36px 40px;
+  max-width: 380px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.confirm-text {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  margin: 0;
+  text-align: center;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm-actions .btn-delete {
+  flex: 1;
+}
+
+.confirm-cancel {
+  flex: 1;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.confirm-cancel:hover {
   background: var(--ink);
   color: var(--white);
   border-color: var(--ink);
