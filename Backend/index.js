@@ -114,6 +114,49 @@ app.get("/api/articles", async (req, res) => {
   }
 });
 
+app.get("/api/articles_by_categories/:category", async (req, res) => {
+  try {
+    const category = req.params.category;
+
+    const result = await pool.query(
+      `
+      SELECT
+        articles.id,
+        title,
+        pages_from,
+        pages_to,
+        publication_date,
+        pdf_path,
+        extra_file_path,
+        categories.category,
+        symbol,
+        (
+          SELECT string_agg(a.name || ' ' || a.surname, ', ' ORDER BY a.id)
+          FROM author_articles aa
+          JOIN authors a ON aa.id_author = a.id
+          WHERE aa.id_article = articles.id
+        ) AS authors,
+        (
+          SELECT string_agg(t.name, ', ' ORDER BY t.name)
+          FROM article_tags at
+          JOIN tags t ON at.id_tag = t.id
+          WHERE at.id_article = articles.id
+        ) AS tags
+      FROM articles
+      LEFT JOIN categories ON articles.id_category = categories.id
+      WHERE categories.category ILIKE $1
+      ORDER BY publication_date DESC;
+      `,
+      [category]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+});
+
 // app.get("/api/szukaj", (req, res) => {
 //   res.json({
 //     message: "SZUKAJ DZIAŁA",

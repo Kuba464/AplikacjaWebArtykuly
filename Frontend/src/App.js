@@ -18,6 +18,7 @@ import Kontakt from "./Strony/Kontakt";
 import Szukaj from "./Strony/Szukaj";
 import Footer from "./Components/Footer.js";
 import Statystyki from "./Strony/Statystyki";
+import Kategoria from "./Strony/Kategoria.js";
 
 function App() {
   
@@ -40,6 +41,7 @@ function App() {
         <Route path="/admin/edytuj-artykul/:id" element={<DodawanieEdytowanieArtykulu />} />
         <Route path="/szukaj" element={<Szukaj />} />
         <Route path="/admin/statystyki" element={<Statystyki />} />
+        <Route path="/kategoria/:category" element={<Kategoria />} />
       </Routes>
       <Footer />
     </BrowserRouter>

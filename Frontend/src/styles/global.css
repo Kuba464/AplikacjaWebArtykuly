@@ -370,6 +370,21 @@ footer {
   color: var(--accent);
 }
 
+.category-page {
+  padding: 0 60px 70px;
+}
+
+.category-page .blog-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .category-page {
+    padding: 0 28px 56px;
+  }
+}
+
 @media (max-width: 700px) {
   footer {
     padding: 18px 20px;
