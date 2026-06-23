@@ -81,8 +81,76 @@ function DodawanieEdytowanieArtykulu() {
       });
   }, [id, isEditMode]);
 
+  function validateForm() {
+  const errors = [];
+
+  const title = String(articleData.tytul).trim();
+  const pagesFromText = String(articleData.zakresStronOd).trim();
+  const pagesToText = String(articleData.zakresStronDo).trim();
+
+  const pagesFrom = Number(pagesFromText);
+  const pagesTo = Number(pagesToText);
+
+  if (title === "") {
+    errors.push("Uzupełnij tytuł artykułu.");
+  }
+
+  if (title.length < 3) {
+    errors.push("Tytuł musi mieć co najmniej 3 znaki.");
+  }
+
+  if (articleData.autorzy.length === 0) {
+    errors.push("Dodaj przynajmniej jednego autora.");
+  }
+
+  if (articleData.slowaKluczowe.length === 0) {
+    errors.push("Dodaj przynajmniej jedno słowo kluczowe.");
+  }
+
+  if (pagesFromText === "") {
+    errors.push("Uzupełnij stronę początkową.");
+  }
+
+  if (pagesToText === "") {
+    errors.push("Uzupełnij stronę końcową.");
+  }
+
+  if (isNaN(pagesFrom) || isNaN(pagesTo)) {
+    errors.push("Zakres stron musi zawierać tylko liczby.");
+  }
+
+  if (pagesFrom <= 0 || pagesTo <= 0) {
+    errors.push("Numery stron muszą być większe od 0.");
+  }
+
+  if (pagesFrom > pagesTo) {
+    errors.push("Strona początkowa nie może być większa niż końcowa.");
+  }
+
+  if (articleData.kategoria === "") {
+    errors.push("Wybierz kategorię.");
+  }
+
+  if (!isEditMode && !articleData.pdfFile) {
+    errors.push("Dodaj plik PDF.");
+  }
+
+  if (isEditMode && !articleData.pdfFile && !articleData.existingPdfPath) {
+    errors.push("Dodaj plik PDF.");
+  }
+
+  return errors;
+}
+
 async function handleSubmit(e) {
   e.preventDefault();
+
+  const errors = validateForm();
+
+  if (errors.length > 0) {
+    alert(errors.join("\n"));
+    return;
+  }
 
   try {
     const formData = new FormData();
@@ -230,7 +298,7 @@ async function handleSubmit(e) {
 
           <div className="pages-row">
             <input
-              type="text"
+              type="number"
               className="form-group"
               placeholder="Od"
               value={articleData.zakresStronOd}

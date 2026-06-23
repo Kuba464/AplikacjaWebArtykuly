@@ -29,10 +29,10 @@ function StronaGlowna() {
   }
   return (
     <>
-      <Siteheader /> //górny pasek z nazwą strony i tagline
-      <Hero />       //baner z tytułem i przyciskiem
-      <Categories /> //lista kategorii artykułów
-      <div className="blog"> // główny kontener z artykułami
+      <Siteheader /> 
+      <Hero />       
+      <Categories /> 
+      <div className="blog"> 
         <div className="blog-grid"> 
           {articles.map((article) => (
             <Article key={article.id} article={article} />
