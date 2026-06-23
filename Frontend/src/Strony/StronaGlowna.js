@@ -13,8 +13,14 @@ function StronaGlowna() {
       .then((res) => res.json())
       .then((data) => {
         const currentYear = new Date().getFullYear();
-        const byYear = (year) => data.filter(a => new Date(a.publication_date).getFullYear() === year);
-        const filtered = byYear(currentYear).length > 0 ? byYear(currentYear) : byYear(currentYear - 1);
+        const byYear = (year) =>
+          data.filter(
+            (a) => new Date(a.publication_date).getFullYear() === year,
+          );
+        const filtered =
+          byYear(currentYear).length > 0
+            ? byYear(currentYear)
+            : byYear(currentYear - 1);
         setArticles(filtered);
         setLoading(false);
       })
@@ -29,11 +35,19 @@ function StronaGlowna() {
   }
   return (
     <>
-      <Siteheader /> 
-      <Hero />       
-      <Categories /> 
-      <div className="blog"> 
-        <div className="blog-grid"> 
+      <Siteheader />
+      <Hero />
+      <Categories />
+        <p />
+        <p />
+        <div className="sec-label">Odkrywaj</div>
+        <h1 className="sec-title">Najnowsze artykuły</h1>
+        <p className="sec-desc">
+          Przeglądaj najnowsze publikacje. 
+        </p>
+
+      <div className="blog">
+        <div className="blog-grid">
           {articles.map((article) => (
             <Article key={article.id} article={article} />
           ))}
