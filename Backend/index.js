@@ -3,6 +3,8 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 
@@ -13,12 +15,51 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.post("/api/login", async (req, res) => {
+  const { login, haslo } = req.body;
+
+  if (login !== process.env.ADMIN_LOGIN) {
+    return res.status(401).json({ error: "Nieprawidłowe dane logowania" });
+  }
+
+  const valid = await bcrypt.compare(haslo, process.env.ADMIN_PASSWORD_HASH);
+  if (!valid) {
+    return res.status(401).json({ error: "Nieprawidłowe dane logowania" });
+  }
+
+  const token = jwt.sign({ login }, process.env.JWT_SECRET, { expiresIn: "8h" });
+  res.json({ token });
+});
+
+function requireAuth(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Brak autoryzacji" });
+  }
+  try {
+    jwt.verify(auth.slice(7), process.env.JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: "Nieprawidłowy token" });
+  }
+}
+
 app.get("/api/test", (req, res) => {
   res.json({
-    message: "Backend lololo działa 🚀",
+    message: "Backend działa",
   });
 });
-app.use("DB/PdfFiles", express.static("DB/PdfFiles"));
+app.use(
+  "/DB/PdfFiles",
+  express.static(path.join(__dirname, "/DB/PdfFiles"))
+);
+
+app.use(
+  "/DB/ExtraFiles",
+  express.static(path.join(__dirname, "DB/ExtraFiles"))
+);
+console.log("__dirname =", __dirname);
+console.log("static path =", path.join(__dirname, "DB/PdfFiles"));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -138,6 +179,35 @@ ORDER BY publication_date DESC;
   }
 });
 
+app.post("/api/stats/:id", async (req, res) => {
+  try {
+    await pool.query("INSERT INTO stats (id_article) VALUES ($1)", [req.params.id]);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+});
+
+app.get("/api/stats", requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        articles.id,
+        articles.title,
+        COUNT(stats.id) AS views
+      FROM articles
+      LEFT JOIN stats ON stats.id_article = articles.id
+      GROUP BY articles.id, articles.title
+      ORDER BY views DESC, articles.title ASC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Błąd serwera" });
+  }
+});
+
 app.get("/api/roczniki", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -202,7 +272,7 @@ async function getOrCreateAuthor(fullName) {
 
 app.post(
   "/api/article",
-
+  requireAuth,
   upload.fields([
     { name: "pdf", maxCount: 1 },
     { name: "extraFile", maxCount: 1 },
@@ -253,7 +323,7 @@ app.post(
       if (req.files.extraFile) {
         const file = req.files.extraFile[0];
 
-        const finalExtraName = Date.now() + path.extname(file.originalname);
+        const finalExtraName = `${symbol}-${year}-${paddedNumber}-extra${path.extname(file.originalname)}`;
 
         const finalExtraPath = path.join("DB/ExtraFiles", finalExtraName);
 
@@ -326,7 +396,7 @@ app.post(
   },
 );
 
-app.delete("/api/articles/:id", async (req, res) => {
+app.delete("/api/articles/:id", requireAuth, async (req, res) => {
   const articleId = req.params.id;
   const query = `DELETE FROM articles WHERE id = $1`;
 
@@ -342,6 +412,7 @@ app.delete("/api/articles/:id", async (req, res) => {
 // ZMIANA: Zamiast "/api/articles/:id" dajemy ten sam adres co w POST
 app.put(
   "/api/article",
+  requireAuth,
   upload.fields([
     { name: "pdf", maxCount: 1 },
     { name: "extraFile", maxCount: 1 },

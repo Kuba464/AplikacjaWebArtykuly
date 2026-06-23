@@ -511,3 +511,54 @@ footer {
     font-size: 34px;
   }
 }
+
+.tagsandextrefile {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 8px;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+
+.extra-file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  background: var(--muted);
+  border: 1px solid var(--muted);
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: 0.2s;
+  font-weight: 600;
+
+  letter-spacing: 0.04em;
+
+  color: var(--white);
+
+  cursor: pointer;
+
+  transition: all 0.18s ease;
+}
+
+
+.extra-file-btn:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--accent) 65%,
+    transparent
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--accent) 45%,
+    transparent
+  );
+
+  color: var(--white);
+}

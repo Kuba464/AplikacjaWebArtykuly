@@ -28,7 +28,7 @@ function DodawanieEdytowanieArtykulu() {
   });
 
   useEffect(() => {
-    if (localStorage.getItem("zalogowany") !== "true") {
+    if (!localStorage.getItem("token")) {
       navigate("/admin/logowanie");
     }
   }, [navigate]);
@@ -112,6 +112,7 @@ async function handleSubmit(e) {
     // Wszystko wysyłamy na Twój jeden, główny endpoint, zmieniając tylko metodę HTTP
     const response = await fetch("http://localhost:5000/api/article", {
       method: isEditMode ? "PUT" : "POST",
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       body: formData,
     });
 
@@ -174,14 +175,14 @@ async function handleSubmit(e) {
 
       <form className="form-horizontal" onSubmit={handleSubmit}>
         {/* TYTUŁ */}
-        <div className="form-group">
+        <div className="form-group1">
           <label htmlFor="tytul" className="control-label">
             Tytuł
           </label>
 
-          <input
+          <input style={{ textTransform: "none" }}
             type="text"
-            className="form-control"
+            className="form-group"
             id="tytul"
             value={articleData.tytul}
             onChange={(e) =>
@@ -194,10 +195,10 @@ async function handleSubmit(e) {
         </div>
 
         {/* AUTORZY */}
-        <div className="form-group">
+        <div className="form-group1">
           <label className="control-label">Autorzy</label>
 
-          <Autorzy
+          <Autorzy 
             autorzy={articleData.autorzy}
             setAutorzy={(autorzy) =>
               setArticleData({
@@ -209,7 +210,7 @@ async function handleSubmit(e) {
         </div>
 
         {/* SŁOWA KLUCZOWE */}
-        <div className="form-group">
+        <div className="form-group1">
           <label className="control-label">Słowa kluczowe</label>
 
           <SlowaKluczowe
@@ -224,13 +225,13 @@ async function handleSubmit(e) {
         </div>
 
         {/* ZAKRES STRON */}
-        <div className="form-group">
+        <div className="form-group1">
           <label className="control-label">Zakres stron</label>
 
           <div className="pages-row">
             <input
               type="text"
-              className="form-control"
+              className="form-group"
               placeholder="Od"
               value={articleData.zakresStronOd}
               onChange={(e) =>
@@ -245,7 +246,7 @@ async function handleSubmit(e) {
 
             <input
               type="text"
-              className="form-control"
+              className="form-group"
               placeholder="Do"
               value={articleData.zakresStronDo}
               onChange={(e) =>
@@ -259,11 +260,11 @@ async function handleSubmit(e) {
         </div>
 
         {/* KATEGORIA */}
-        <div className="form-group">
+        <div className="form-group1">
           <label className="control-label">Kategoria</label>
 
           <select
-            className="form-control"
+            className="category-select"
             value={articleData.kategoria}
             onChange={(e) =>
               setArticleData({
@@ -272,16 +273,18 @@ async function handleSubmit(e) {
               })
             }
           >
-            <option value="" disabled hidden>
+            <div className="dropdown">
+            <option className="control-label" value="" disabled hidden>
               Wybierz kategorię
             </option>
 
-            <option value="Matematyka">Matematyka</option>
-            <option value="Informatyka">Informatyka</option>
-            <option value="Dydaktyka">Dydaktyka</option>
-            <option value="Popularyzacja nauki">
+            <option style={{ textTransform: "none" }} value="Matematyka">Matematyka</option>
+            <option style={{ textTransform: "none" }} value="Informatyka">Informatyka</option>
+            <option style={{ textTransform: "none" }} value="Dydaktyka">Dydaktyka</option>
+            <option style={{ textTransform: "none" }} value="Popularyzacja nauki">
               Popularyzacja nauki
             </option>
+            </div>
           </select>
         </div>
 

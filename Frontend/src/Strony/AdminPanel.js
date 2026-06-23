@@ -14,7 +14,7 @@ function AdminPanel() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem("zalogowany") !== "true") {
+    if (!localStorage.getItem("token")) {
       navigate("/admin/logowanie");
     }
   }, [navigate]);
@@ -42,8 +42,21 @@ function AdminPanel() {
 
   return (
     <div className="admin-panel">
+      <div className="button-wrapper">
+          <button
+              className="back-button2"
+              onClick={() => {
+                localStorage.removeItem("token");
+                navigate("/strona-glowna");
+              }}
+            >
+              Wyloguj
+            </button>
+      </div>
       {/* HERO */}
-      <section className="admin-hero">
+
+      <section className="admin-hero1">
+        
         <div className="admin-hero-content">
           <p className="site-title">Panel administracyjny</p>
 
@@ -52,25 +65,6 @@ function AdminPanel() {
             Dodawaj nowe publikacje, edytuj istniejące artykuły oraz zarządzaj
             treściami w intuicyjnym panelu administracyjnym.
           </p>
-
-          <div className="admin-actions">
-            <button
-              className="btn-dark"
-              onClick={() => navigate("/admin/dodaj-edytuj-artykul")}
-            >
-              Dodaj nowy artykuł
-            </button>
-
-            <button
-              className="btn-outline"
-              onClick={() => {
-                localStorage.removeItem("zalogowany");
-                navigate("/strona-glowna");
-              }}
-            >
-              Wyloguj
-            </button>
-          </div>
         </div>
 
         <div className="deco-books">
@@ -92,7 +86,23 @@ function AdminPanel() {
           Poniżej znajdziesz wszystkie dostępne artykuły wraz z możliwością ich
           edycji lub usunięcia.
         </p>
+          <div className="admin-actions">
+            
+            <button
+              className="back-button2"
+              onClick={() => navigate("/admin/dodaj-edytuj-artykul")}
+            >
+              Dodaj nowy artykuł
+            </button>
 
+            <button
+              className="back-button3"
+              onClick={() => navigate("/admin/statystyki")}
+            >
+              Statystyki otwarć
+            </button>
+          </div>
+          <p></p>
         <div className="blog-grid">
           {articles.map((article) => (
             <div className="admin-article-card" key={article.id}>
